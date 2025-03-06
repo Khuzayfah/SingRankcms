@@ -28,7 +28,7 @@ export const revalidate = 60;
 export async function generateStaticParams() {
   const posts = await getAllBlogPosts();
   return posts.map((post) => ({
-    id: post.slug ? (post.slug.includes('-') ? post.slug.split('-').slice(-1)[0] : post.slug) : post.id,
+    id: post.id,
   }));
 }
 
@@ -270,7 +270,7 @@ export default async function BlogPost({ params }: { params: { id: string } }) {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               {relatedPosts.map(relatedPost => (
                 <div key={relatedPost.id} className="bg-white rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-all duration-300 border border-gray-100">
-                  <Link href={`/blog/${relatedPost.slug ? (relatedPost.slug.includes('-') ? relatedPost.slug.split('-').slice(-1)[0] : relatedPost.slug) : relatedPost.id}`} className="block">
+                  <Link href={`/blog/${relatedPost.id}`} className="block">
                     <div className="relative aspect-video overflow-hidden">
                       <Image 
                         src={relatedPost.image || '/images/blog/default.jpg'}

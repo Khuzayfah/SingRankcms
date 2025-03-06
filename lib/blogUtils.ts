@@ -229,60 +229,86 @@ export const getAllBlogPosts = cache(async (): Promise<BlogPost[]> => {
 
 // Get post by slug
 export const getBlogPostBySlug = cache(async (slug: string): Promise<BlogPost | null> => {
+  console.log(`Attempting to find blog post with slug: ${slug}`);
+  ensureDirectoryExists(BLOG_DIR);
+  
   // First try direct match
   let filePath = path.join(BLOG_DIR, `${slug}.md`);
+  let fileSlug = slug;
   
-  // If file doesn't exist, try to find a file that ends with the slug
+  // If file doesn't exist, try to find a file that matches the slug
   if (!fs.existsSync(filePath)) {
+    console.log(`No direct match found for ${filePath}, trying alternative methods`);
     const files = fs.readdirSync(BLOG_DIR);
+    console.log(`Available blog files: ${files.join(', ')}`);
     
-    // Try different matching strategies
-    let matchingFile = files.find(file => file.endsWith(`-${slug}.md`));
+    // Different matching strategies, in order of priority
+    // 1. Exact match with the slug
+    let matchingFile = files.find(file => file.replace(/\.md$/, '') === slug);
     
-    // If not found, try to find a file that contains the slug
+    // 2. Match with the format YYYY-MM-DD-slug.md (common in CMS)
+    if (!matchingFile) {
+      matchingFile = files.find(file => {
+        const parts = file.replace(/\.md$/, '').split('-');
+        // If we have enough parts for a date (YYYY-MM-DD) + slug format
+        if (parts.length >= 4) {
+          // Join all parts after the date to form the potential slug
+          const potentialSlug = parts.slice(3).join('-');
+          return potentialSlug === slug;
+        }
+        return false;
+      });
+    }
+    
+    // 3. Check if the slug appears at the end of the filename
+    if (!matchingFile) {
+      matchingFile = files.find(file => file.endsWith(`-${slug}.md`));
+    }
+    
+    // 4. Check if the slug appears anywhere in the filename
     if (!matchingFile) {
       matchingFile = files.find(file => file.includes(slug));
     }
     
-    // If not found, try to find a file with the same ID
-    if (!matchingFile) {
-      matchingFile = files.find(file => {
-        const fileSlug = file.replace(/\.md$/, '');
-        return fileSlug === slug;
-      });
-    }
-    
+    // If a matching file is found, update the file path
     if (matchingFile) {
       filePath = path.join(BLOG_DIR, matchingFile);
-      slug = matchingFile.replace(/\.md$/, '');
+      fileSlug = matchingFile.replace(/\.md$/, '');
+      console.log(`Found matching file: ${matchingFile}`);
     } else {
       console.log(`No matching file found for slug: ${slug}`);
-      console.log(`Available files: ${files.join(', ')}`);
       return null;
     }
   }
   
-  const fileData = await parseMarkdownFile(filePath);
-  return {
-    id: slug,
-    slug,
-    title: fileData.title,
-    description: fileData.description,
-    date: fileData.date,
-    modifiedDate: fileData.modifiedDate,
-    category: fileData.category,
-    image: fileData.image,
-    content: fileData.content,
-    readTime: fileData.readTime,
-    featured: fileData.featured || false,
-    tags: fileData.tags || [],
-    author: {
-      name: fileData.author?.name || 'SingRank Team',
-      title: fileData.author?.title || 'Content Team',
-      image: fileData.author?.image || '/images/authors/default.jpg'
-    },
-    tableOfContents: fileData.tableOfContents
-  };
+  try {
+    const fileData = await parseMarkdownFile(filePath);
+    console.log(`Successfully parsed file for slug: ${fileSlug}`);
+    
+    return {
+      id: fileSlug,
+      slug: fileSlug,
+      title: fileData.title,
+      description: fileData.description,
+      date: fileData.date,
+      modifiedDate: fileData.modifiedDate,
+      category: fileData.category,
+      image: fileData.image,
+      content: fileData.content,
+      readTime: fileData.readTime,
+      featured: fileData.featured || false,
+      tags: fileData.tags || [],
+      author: {
+        name: fileData.author?.name || 'SingRank Team',
+        title: fileData.author?.title || 'Content Team',
+        image: fileData.author?.image || '/images/authors/default.jpg'
+      },
+      tableOfContents: fileData.tableOfContents
+    };
+  } catch (error) {
+    console.error(`Error parsing file ${filePath}:`, error);
+    return null;
+  }
 });
 
 // Get posts by category
