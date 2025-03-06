@@ -1,92 +1,60 @@
 ---
-title: "Contoh Artikel: Strategi Digital Marketing Terbaik untuk Bisnis Anda"
-date: 2025-03-07T15:00:00.000Z
-thumbnail: /images/uploads/digital-marketing.jpg
-description: "Pelajari strategi digital marketing terbaik untuk meningkatkan visibilitas online dan pertumbuhan bisnis Anda."
+title: Testing CMS Integration with Next.js
+date: 2025-03-07
+thumbnail: /images/blog/cms-integration.jpg
+description: A sample article to demonstrate the CMS integration features and
+  content display capabilities.
 tags:
-  - Digital Marketing
-  - SEO
-  - Social Media
-featured: true
-author:
-  name: "Tim SingRank"
-  title: "Digital Marketing Specialist"
-  image: "/images/authors/default.jpg"
+  - CMS
+  - Next.js
+  - Integration
+  - Tutorial
+author: Admin
 ---
+# Testing CMS Integration with Next.jsaa
 
-# Strategi Digital Marketing Terbaik untuk Bisnis Anda
+Welcome to our first blog post using the integrated CMS system! This article will demonstrate various features and formatting options available through our markdown-based CMS.
 
-Digital marketing telah menjadi komponen penting dalam strategi bisnis modern. Dengan semakin banyaknya konsumen yang beralih ke platform digital untuk mencari produk dan layanan, penting bagi bisnis untuk memiliki kehadiran online yang kuat.
+## Features Demonstrated
 
-## Mengapa Digital Marketing Penting?
+1. **Metadata Support**
 
-Digital marketing memungkinkan bisnis untuk:
+   * Title and description
+   * Publication date
+   * Author information
+   * Tags for categorization
+   * Thumbnail image
+2. **Content Formatting**
 
-1. **Menjangkau audiens yang lebih luas** - Tidak ada batasan geografis dalam pemasaran digital.
-2. **Biaya yang lebih efektif** - Dibandingkan dengan metode pemasaran tradisional, digital marketing sering kali lebih terjangkau.
-3. **Hasil yang terukur** - Anda dapat melacak dan menganalisis hasil kampanye Anda secara real-time.
-4. **Personalisasi** - Menyesuaikan pesan Anda berdasarkan perilaku dan preferensi pelanggan.
+   * Headings (H1, H2, H3)
+   * Lists (ordered and unordered)
+   * *Italic* and **bold** text
+   * [Links](#) and images
+   * Code blocks
 
-## Strategi Digital Marketing yang Efektif
+### Code Example
 
-### 1. Optimasi Mesin Pencari (SEO)
+Here's a sample code snippet showing a JavaScript function:
 
-SEO adalah proses meningkatkan visibilitas situs web Anda di hasil mesin pencari. Beberapa praktik terbaik SEO meliputi:
+```javascript
+function calculateReadTime(content) {
+  const wordsPerMinute = 200;
+  const wordCount = content.split(/\s+/).length;
+  const readTime = Math.ceil(wordCount / wordsPerMinute);
+  return readTime;
+}
+```
 
-- Penelitian kata kunci yang komprehensif
-- Konten berkualitas tinggi yang relevan dengan audiens Anda
-- Optimasi on-page (meta tag, struktur URL, dll.)
-- Membangun backlink berkualitas
+## Testing Images
 
-### 2. Pemasaran Konten
+Below is a placeholder for testing image display:
 
-Konten yang berharga dan informatif dapat membantu membangun otoritas dan kepercayaan dengan audiens Anda. Jenis konten yang efektif meliputi:
+![CMS Integration](/images/blog/cms-integration.jpg)
 
-- Blog artikel
-- Infografis
-- Video
-- Podcast
-- Studi kasus
+## Blockquote Example
 
-### 3. Pemasaran Media Sosial
+> This is a blockquote to test styling and indentation. It should be properly formatted with a distinctive background and border.
 
-Platform media sosial menawarkan cara yang bagus untuk terhubung dengan pelanggan dan membangun komunitas. Pilih platform yang paling relevan dengan audiens target Anda dan fokus pada:
+## Conclusion
 
-- Konsistensi posting
-- Konten yang menarik dan berharga
-- Interaksi dengan pengikut
-- Kampanye berbayar yang ditargetkan
-
-### 4. Email Marketing
-
-Email marketing tetap menjadi salah satu strategi digital marketing dengan ROI tertinggi. Untuk kampanye email yang sukses:
-
-- Bangun daftar email organik
-- Segmentasi daftar Anda berdasarkan perilaku dan preferensi
-- Personalisasi pesan Anda
-- Uji dan optimalkan subjek dan konten email
-
-### 5. Periklanan PPC
-
-Pay-per-click (PPC) advertising memungkinkan Anda untuk menargetkan audiens tertentu dan hanya membayar ketika seseorang mengklik iklan Anda. Platform populer termasuk:
-
-- Google Ads
-- Facebook Ads
-- Instagram Ads
-- LinkedIn Ads
-
-## Mengukur Keberhasilan Digital Marketing
-
-Penting untuk melacak dan menganalisis kinerja kampanye digital marketing Anda. Beberapa metrik kunci untuk diperhatikan meliputi:
-
-- Lalu lintas situs web
-- Tingkat konversi
-- Tingkat pentalan
-- Waktu di halaman
-- ROI (Return on Investment)
-
-## Kesimpulan
-
-Digital marketing yang efektif membutuhkan pendekatan strategis dan konsisten. Dengan memahami audiens target Anda dan menggunakan kombinasi taktik yang tepat, Anda dapat meningkatkan visibilitas online, menarik lebih banyak pelanggan potensial, dan mendorong pertumbuhan bisnis Anda.
-
-Mulailah dengan menetapkan tujuan yang jelas, mengembangkan strategi yang komprehensif, dan secara teratur mengevaluasi dan menyesuaikan pendekatan Anda berdasarkan data dan wawasan yang Anda kumpulkan. 
+This sample article helps us verify that our CMS integration is working correctly and that all content elements are being rendered properly on the blog page.
