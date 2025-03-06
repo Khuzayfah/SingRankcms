@@ -94,7 +94,7 @@ export default function BlogPost({ params }: { params: { id: string } }) {
     
   // Use placeholder related posts if none are found
   const hasRelatedPosts = relatedPosts.length > 0;
-  
+
   return (
     <main className="min-h-screen pt-20 pb-16 bg-white">
       {/* Back to blog link */}
@@ -168,7 +168,7 @@ export default function BlogPost({ params }: { params: { id: string } }) {
       {/* Featured Image */}
       <section className="container mx-auto px-4 py-8">
         <div className="max-w-5xl mx-auto">
-          <div className="relative aspect-video rounded-xl overflow-hidden shadow-lg mb-12">
+          <div className="relative aspect-square rounded-xl overflow-hidden shadow-lg mb-12">
             <Image
               src={post.image || '/images/blog/default.jpg'}
               alt={post.title}
@@ -206,35 +206,35 @@ export default function BlogPost({ params }: { params: { id: string } }) {
               <button className="inline-flex items-center text-gray-600 hover:text-[#d13239] transition-colors">
                 <FiHeart size={18} className="mr-2" />
                 <span>Like</span>
-              </button>
+                    </button>
               <button className="inline-flex items-center text-gray-600 hover:text-[#d13239] transition-colors">
                 <FiMessageSquare size={18} className="mr-2" />
                 <span>Comment</span>
-              </button>
+                    </button>
             </div>
             
             <div className="flex space-x-3">
               <button className="inline-flex items-center text-gray-600 hover:text-[#d13239] transition-colors">
                 <FiShare2 size={18} className="mr-2" />
                 <span>Share</span>
-              </button>
+                    </button>
             </div>
-          </div>
-        </div>
+                </div>
+              </div>
       </section>
-      
-      {/* Tags */}
+                
+                {/* Tags */}
       {post.tags && post.tags.length > 0 && (
         <section className="container mx-auto px-4 py-6">
           <div className="max-w-3xl mx-auto">
-            <div className="flex flex-wrap gap-2">
+                    <div className="flex flex-wrap gap-2">
               {post.tags.map(tag => (
                 <span key={tag} className="px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-sm">
-                  {tag}
-                </span>
-              ))}
-            </div>
-          </div>
+                          {tag}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
         </section>
       )}
       
@@ -248,8 +248,8 @@ export default function BlogPost({ params }: { params: { id: string } }) {
               {relatedPosts.map(relatedPost => (
                 <div key={relatedPost.id} className="bg-white rounded-xl overflow-hidden shadow-md hover:shadow-lg transition-all duration-300 group">
                   <Link href={`/blog/${relatedPost.id}`} className="block h-full">
-                    <div className="relative aspect-square md:aspect-video overflow-hidden">
-                      <Image 
+                    <div className="relative aspect-square overflow-hidden">
+                          <Image
                         src={relatedPost.image || '/images/blog/default.jpg'}
                         alt={relatedPost.title}
                         fill
@@ -267,18 +267,18 @@ export default function BlogPost({ params }: { params: { id: string } }) {
                         {relatedPost.title}
                       </h3>
                       <p className="text-gray-600 text-sm line-clamp-2">{relatedPost.description}</p>
-                    </div>
+                  </div>
                   </Link>
                 </div>
               ))}
-            </div>
           </div>
-        </section>
+        </div>
+      </section>
       )}
       
       {/* CTA Section */}
       <section className="bg-gradient-to-r from-[#d13239] to-[#a61b22] py-16">
-        <div className="container mx-auto px-4">
+          <div className="container mx-auto px-4">
           <div className="max-w-3xl mx-auto text-center text-white">
             <h2 className="text-3xl font-bold mb-4">Ready to Elevate Your Digital Presence?</h2>
             <p className="mb-8 opacity-90">Our team of experts is ready to help you achieve your digital marketing goals. Contact us today to get started.</p>
@@ -289,11 +289,11 @@ export default function BlogPost({ params }: { params: { id: string } }) {
               </Link>
               <Link href="/services" className="px-8 py-3 border border-white text-white rounded-full font-medium hover:bg-white/10 transition-colors">
                 Our Services
-              </Link>
-            </div>
+                      </Link>
+              </div>
           </div>
-        </div>
-      </section>
+          </div>
+        </section>
     </main>
   );
 }
@@ -310,7 +310,7 @@ function transformMarkdownToHTML(markdown: string): string {
     .replace(/^###### (.*$)/gm, '<h6 class="text-[#d13239] font-bold">$1</h6>')
     .replace(/\*\*(.*?)\*\*/g, '<strong class="text-[#d13239] font-bold">$1</strong>')
     .replace(/\*(.*?)\*/g, '<em class="text-gray-900">$1</em>')
-    .replace(/!\[(.*?)\]\((.*?)\)/g, '<img alt="$1" src="$2" class="rounded-xl shadow-md aspect-square object-cover" />')
+    .replace(/!\[(.*?)\]\((.*?)\)/g, '<div class="relative w-full aspect-square mb-6"><img src="$2" alt="$1" class="rounded-xl shadow-md object-cover w-full h-full" loading="lazy" /></div>')
     .replace(/\[(.*?)\]\((.*?)\)/g, '<a href="$2" class="text-[#d13239] hover:underline">$1</a>')
     .replace(/^\> (.*$)/gm, '<blockquote class="border-l-4 border-[#d13239] pl-4 py-2 my-4 bg-gray-50 text-gray-900">$1</blockquote>')
     .replace(/^- (.*$)/gm, '<ul class="list-disc pl-4 text-gray-900"><li class="text-gray-900">$1</li></ul>')
