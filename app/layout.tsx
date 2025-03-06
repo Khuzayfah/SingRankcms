@@ -6,19 +6,10 @@ import Navbar from './components/Navbar'
 import Footer from './components/Footer'
 import dynamic from 'next/dynamic'
 import Script from 'next/script'
-import { ErrorBoundary } from 'react-error-boundary'
-
-// Simple fallback component for error states
-const ErrorFallback = () => {
-  return null; // Return nothing to prevent UI disruption
-};
 
 // Dynamically import components with browser-only features
 // This prevents hydration errors by ensuring they only load on the client
-const ChatTerminal = dynamic(() => import('./components/ChatTerminal').catch(err => {
-  console.error('Error loading ChatTerminal:', err);
-  return () => null; // Fallback component
-}), { 
+const ChatTerminal = dynamic(() => import('./components/ChatTerminal'), { 
   ssr: false, 
   loading: () => <div className="hidden lg:block fixed bottom-6 right-6 z-50 opacity-0"></div> 
 })
@@ -138,9 +129,7 @@ export default function RootLayout({
             {children}
           </main>
           <Footer />
-          <ErrorBoundary FallbackComponent={ErrorFallback}>
-            <ChatTerminal />
-          </ErrorBoundary>
+          <ChatTerminal />
         </div>
         
         {/* Add Netlify Identity Widget - moved to bottom of body for better compatibility */}
