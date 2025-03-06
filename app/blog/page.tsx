@@ -254,35 +254,25 @@ export default function Blog() {
         </div>
         
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {postsToDisplay.map((post) => (
-            <div 
-              key={post.id} 
-              className="rounded-xl overflow-hidden shadow group bg-white border border-gray-100 hover:shadow-xl transition-all duration-300"
-            >
+          {postsToDisplay.map(post => (
+            <div key={post.id} className="bg-white rounded-xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 group">
               <Link href={`/blog/${post.id}`} className="block h-full">
                 <div className="relative aspect-square overflow-hidden">
-                  <div className="absolute inset-0 bg-[#d13239]/80 flex items-center justify-center z-10 opacity-0 group-hover:opacity-90 transition-opacity duration-300">
-                    <span className="text-white font-medium flex items-center">
-                      Read Article <FiArrowRight className="ml-2" />
+                  <Image 
+                    src={post.image || '/images/blog/default.jpg'}
+                    alt={post.title}
+                    fill
+                    className="object-cover object-center group-hover:scale-105 transition-transform duration-300"
+                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 33vw, 400px"
+                  />
+                  <div className="absolute top-4 left-4 z-10">
+                    <span className="inline-block px-3 py-1 bg-white/90 backdrop-blur-sm text-[#d13239] rounded-full text-xs font-medium">
+                      {post.category}
                     </span>
-                  </div>
-                  <div className="h-full w-full relative">
-                    <div className="absolute top-4 left-4 z-10">
-                      <span className="inline-block px-3 py-1 bg-white/90 backdrop-blur-sm text-[#d13239] rounded-full text-xs font-medium">
-                        {post.category}
-                      </span>
-                    </div>
-                    <Image 
-                      src={post.image || '/images/blog/default.jpg'}
-                      alt={post.title}
-                      fill
-                      className="object-cover object-center"
-                      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                    />
                   </div>
                 </div>
                 <div className="p-6">
-                  <div className="flex items-center text-sm text-gray-500 mb-4">
+                  <div className="flex items-center text-sm text-gray-600 mb-3">
                     <span className="flex items-center mr-4">
                       <FiCalendar className="mr-1.5" size={14} />
                       {post.date}
@@ -292,10 +282,14 @@ export default function Blog() {
                       {post.readTime}
                     </span>
                   </div>
-                  <h3 className="text-xl font-bold mb-3 text-gray-900 group-hover:text-[#d13239] transition-colors">
+                  <h3 className="text-xl font-bold mb-3 text-gray-900 group-hover:text-[#d13239] transition-colors line-clamp-2">
                     {post.title}
                   </h3>
-                  <p className="text-gray-600 mb-4 line-clamp-2">{post.description}</p>
+                  <p className="text-gray-700 mb-4 line-clamp-2">{post.description}</p>
+                  <div className="flex items-center text-[#d13239] font-medium">
+                    Read More
+                    <FiArrowRight className="ml-2" />
+                  </div>
                 </div>
               </Link>
             </div>
