@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, Suspense } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 interface Message {
@@ -119,6 +119,15 @@ const findAnswer = (question: string) => {
   
   // If no matching keywords, return a default response
   return getRandomDefaultResponse();
+};
+
+// Error boundary for client components
+const ErrorFallback = () => {
+  return (
+    <div className="hidden">
+      {/* Hidden error state that doesn't break the UI */}
+    </div>
+  );
 };
 
 export default function ChatTerminal() {

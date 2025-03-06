@@ -123,6 +123,14 @@ const nextConfig = {
   },
   // Improve webpack configuration for faster builds and better performance
   webpack: (config, { dev, isServer }) => {
+    // Fix for "Cannot read properties of undefined (reading 'call')" error
+    config.resolve.fallback = {
+      ...config.resolve.fallback,
+      fs: false,
+      net: false,
+      tls: false,
+    };
+    
     // Optimize production builds
     if (!dev && !isServer) {
       // Enable tree shaking
