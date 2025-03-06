@@ -1,0 +1,123 @@
+backend:
+  name: github
+  repo: Khuzayfah/SingRankcms
+  branch: main
+  base_url: https://api.netlify.com # Optional if you use Netlify for auth
+  auth_endpoint: auth # Optional if you use Netlify for auth
+
+# Optional: when using the Netlify backend, this setting enables Git Gateway for authentication
+# git-gateway should match the name of your Identity service on netlify
+#backend:
+#  name: git-gateway
+#  branch: main
+
+# Publish mode for editorial workflow
+publish_mode: editorial_workflow
+
+# Media folder configuration
+media_folder: "public/images/uploads"
+public_folder: "/images/uploads"
+
+# Collections - Define content types
+collections:
+  # Blog posts
+  - name: "blog"
+    label: "Blog"
+    folder: "content/blog"
+    create: true
+    slug: "{{year}}-{{month}}-{{day}}-{{slug}}"
+    fields:
+      - { label: "Title", name: "title", widget: "string" }
+      - { label: "Publish Date", name: "date", widget: "datetime" }
+      - { label: "Featured Image", name: "thumbnail", widget: "image", required: false }
+      - { label: "Description", name: "description", widget: "text" }
+      - { label: "Body", name: "body", widget: "markdown" }
+      - { label: "Tags", name: "tags", widget: "list", default: ["blog"] }
+  
+  # Services
+  - name: "services"
+    label: "Services"
+    folder: "content/services"
+    create: true
+    slug: "{{slug}}"
+    fields:
+      - { label: "Title", name: "title", widget: "string" }
+      - { label: "Icon", name: "icon", widget: "string", hint: "Enter FontAwesome icon class" }
+      - { label: "Short Description", name: "description", widget: "text" }
+      - { label: "Detailed Content", name: "body", widget: "markdown" }
+      - { label: "Featured Image", name: "image", widget: "image", required: false }
+      - { label: "Order", name: "order", widget: "number", default: 1 }
+  
+  # Team Members
+  - name: "team"
+    label: "Team Members"
+    folder: "content/team"
+    create: true
+    slug: "{{slug}}"
+    fields:
+      - { label: "Name", name: "name", widget: "string" }
+      - { label: "Position", name: "position", widget: "string" }
+      - { label: "Photo", name: "photo", widget: "image" }
+      - { label: "Biography", name: "bio", widget: "markdown" }
+      - { label: "Order", name: "order", widget: "number", default: 1 }
+  
+  # Testimonials
+  - name: "testimonials"
+    label: "Testimonials"
+    folder: "content/testimonials"
+    create: true
+    slug: "{{slug}}"
+    fields:
+      - { label: "Client Name", name: "name", widget: "string" }
+      - { label: "Position", name: "position", widget: "string" }
+      - { label: "Company", name: "company", widget: "string" }
+      - { label: "Quote", name: "quote", widget: "text" }
+      - { label: "Avatar", name: "avatar", widget: "image", required: false }
+      - { label: "Rating", name: "rating", widget: "number", min: 1, max: 5, default: 5 }
+  
+  # Site Settings
+  - name: "settings"
+    label: "Site Settings"
+    files:
+      - name: "general"
+        label: "General Settings"
+        file: "content/settings/general.json"
+        fields:
+          - { label: "Site Title", name: "title", widget: "string", default: "SingRank" }
+          - { label: "Site Description", name: "description", widget: "text" }
+          - { label: "Logo", name: "logo", widget: "image" }
+          - { label: "Favicon", name: "favicon", widget: "image" }
+          - { label: "Main Color", name: "mainColor", widget: "color", default: "#7857FF" }
+          - { label: "Secondary Color", name: "secondaryColor", widget: "color", default: "#1F69FF" }
+      
+      - name: "contact"
+        label: "Contact Information"
+        file: "content/settings/contact.json"
+        fields:
+          - { label: "Email", name: "email", widget: "string" }
+          - { label: "Phone", name: "phone", widget: "string" }
+          - { label: "Address", name: "address", widget: "text" }
+          - label: "Social Media"
+            name: "social"
+            widget: "list"
+            fields:
+              - { label: "Platform", name: "platform", widget: "string" }
+              - { label: "URL", name: "url", widget: "string" }
+              - { label: "Icon", name: "icon", widget: "string" }
+      
+      - name: "home"
+        label: "Home Page"
+        file: "content/settings/home.json"
+        fields:
+          - { label: "Hero Title", name: "heroTitle", widget: "string" }
+          - { label: "Hero Subtitle", name: "heroSubtitle", widget: "string" }
+          - { label: "Hero Image", name: "heroImage", widget: "image" }
+          - { label: "Call to Action Text", name: "ctaText", widget: "string" }
+          - { label: "Call to Action URL", name: "ctaUrl", widget: "string" }
+          - label: "Features Section"
+            name: "features"
+            widget: "list"
+            fields:
+              - { label: "Title", name: "title", widget: "string" }
+              - { label: "Description", name: "description", widget: "text" }
+              - { label: "Icon", name: "icon", widget: "string" } 
