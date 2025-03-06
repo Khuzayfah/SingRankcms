@@ -6,6 +6,7 @@ import Navbar from './components/Navbar'
 import Footer from './components/Footer'
 import dynamic from 'next/dynamic'
 import Script from 'next/script'
+import StructuredData from './components/StructuredData'
 
 // Dynamically import components with browser-only features
 // This prevents hydration errors by ensuring they only load on the client
@@ -50,13 +51,23 @@ export const viewport: Viewport = {
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://singrank.com'),
-  title: 'SingRank | #1 SEO Agency Singapore | Top-Rated Digital Marketing',
-  description: 'SingRank - Premier SEO Agency Singapore helping businesses rank #1 on Google. Affordable SEO services, technical audits, content strategy & local SEO with proven ROI.',
-  keywords: 'SEO Agency Singapore, Singapore SEO Company, Singapore SEO Services, SEO Expert Singapore, SEO Consultant Singapore, Affordable SEO Singapore, Technical SEO Audit, Content Strategy, Local SEO, SingRank, Answer Engine Optimization, AI optimization',
-  authors: [{ name: 'Khuzayfah Redo - SingRank' }],
+  title: {
+    template: '%s | SingRank - Premier SEO Agency Singapore',
+    default: 'SingRank | #1 SEO Agency Singapore | Top-Rated Digital Marketing'
+  },
+  description: 'SingRank - Premier SEO Agency Singapore helping businesses rank #1 on Google. Expert in SEO, AEO, content strategy & technical optimization with proven ROI. Free consultation available.',
+  keywords: 'SEO Agency Singapore, Singapore SEO Company, Singapore SEO Services, SEO Expert Singapore, SEO Consultant Singapore, Affordable SEO Singapore, Technical SEO Audit, Content Strategy, Local SEO, SingRank, Answer Engine Optimization, AI optimization, Voice Search Optimization',
+  authors: [{ name: 'Khuzayfah Redo', url: 'https://singrank.com/about' }],
+  creator: 'SingRank Team',
+  publisher: 'SingRank Pte Ltd',
+  formatDetection: {
+    email: false,
+    address: false,
+    telephone: false,
+  },
   openGraph: {
     title: 'SingRank | #1 SEO Agency Singapore | Top-Rated Digital Marketing',
-    description: 'SingRank - Premier SEO Agency Singapore helping businesses rank #1 on Google. Affordable SEO services, technical audits, content strategy & local SEO with proven ROI.',
+    description: 'SingRank - Premier SEO Agency Singapore helping businesses rank #1 on Google. Expert in SEO, AEO, content strategy & technical optimization with proven ROI. Free consultation available.',
     url: 'https://singrank.com',
     siteName: 'SingRank - SEO Agency Singapore',
     locale: 'en_SG',
@@ -67,14 +78,17 @@ export const metadata: Metadata = {
         width: 1200,
         height: 630,
         alt: 'SingRank - #1 SEO Agency Singapore',
+        type: 'image/jpeg',
       },
     ],
   },
   twitter: {
     card: 'summary_large_image',
     title: 'SingRank | #1 SEO Agency Singapore | Top-Rated Digital Marketing',
-    description: 'SingRank - Premier SEO Agency Singapore helping businesses rank #1 on Google. Affordable SEO services, technical audits, content strategy & local SEO with proven ROI.',
+    description: 'SingRank - Premier SEO Agency Singapore helping businesses rank #1 on Google. Expert in SEO, AEO, content strategy & technical optimization with proven ROI.',
     images: ['https://singrank.com/images/singrank-twitter-image.jpg'],
+    creator: '@singrank',
+    site: '@singrank',
   },
   robots: {
     index: true,
@@ -85,6 +99,7 @@ export const metadata: Metadata = {
       'max-video-preview': -1,
       'max-image-preview': 'large',
       'max-snippet': -1,
+      'notranslate': true,
     },
   },
   alternates: {
@@ -95,8 +110,18 @@ export const metadata: Metadata = {
   },
   verification: {
     google: 'your-google-verification-code',
+    other: {
+      yandex: 'yandex-verification-code',
+      bing: 'bing-verification-code',
+      baidu: 'baidu-verification-code'
+    }
   },
-  category: 'SEO Services',
+  category: 'Digital Marketing',
+  classification: 'Business > Marketing > SEO',
+  referrer: 'origin-when-cross-origin',
+  other: {
+    'baidu-site-verification': 'baidu-verification-code',
+  },
 }
 
 export default function RootLayout({
@@ -121,6 +146,10 @@ export default function RootLayout({
             opacity: 1;
           }
         `}} />
+        
+        {/* Add structured data */}
+        <StructuredData type="organization" data={{}} />
+        <StructuredData type="website" data={{}} />
       </head>
       <body className="font-sans">
         <div className="min-h-screen flex flex-col">

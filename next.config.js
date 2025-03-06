@@ -3,10 +3,11 @@ const nextConfig = {
   reactStrictMode: true,
   swcMinify: true,
   images: {
+    domains: ['localhost', 'singrank.com'],
     remotePatterns: [
       {
         protocol: 'https',
-        hostname: 'images.unsplash.com',
+        hostname: '**',
       },
     ],
     formats: ['image/avif', 'image/webp'],

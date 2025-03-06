@@ -1,40 +1,55 @@
 ---
-title: "Contoh Artikel Blog dari CMS"
-date: 2025-03-07T08:00:00.000Z
-description: "Ini adalah contoh artikel yang dibuat untuk menguji integrasi CMS dengan website."
-thumbnail: "/images/uploads/digital-marketing-strategies.jpg"
-tags:
-  - blog
-  - test
-  - cms
-featured: true
+title: "Testing CMS Integration with Next.js"
+date: "2025-03-07"
+description: "A sample article to demonstrate the CMS integration features and content display capabilities."
+thumbnail: "/images/blog/cms-integration.jpg"
+tags: ["CMS", "Next.js", "Integration", "Tutorial"]
+author: "Admin"
 ---
 
-# Contoh Artikel Blog dari CMS
+# Testing CMS Integration with Next.js
 
-Ini adalah artikel contoh yang dibuat untuk menguji integrasi antara Netlify CMS dan website SingRank. Artikel ini akan membantu memastikan bahwa konten yang dibuat melalui CMS dapat ditampilkan dengan benar di halaman blog.
+Welcome to our first blog post using the integrated CMS system! This article will demonstrate various features and formatting options available through our markdown-based CMS.
 
-## Fitur Integrasi CMS
+## Features Demonstrated
 
-Berikut adalah beberapa fitur yang telah diimplementasikan:
+1. **Metadata Support**
+   - Title and description
+   - Publication date
+   - Author information
+   - Tags for categorization
+   - Thumbnail image
 
-1. **Sinkronisasi Konten** - Artikel yang dibuat di CMS akan otomatis muncul di halaman blog
-2. **Format Markdown** - Dukungan untuk format markdown seperti **bold**, *italic*, dan [link](https://example.com)
-3. **Gambar** - Dukungan untuk menampilkan gambar dengan rasio 1:1 di halaman blog
-4. **Metadata** - Dukungan untuk judul, deskripsi, tanggal, dan tag
+2. **Content Formatting**
+   - Headings (H1, H2, H3)
+   - Lists (ordered and unordered)
+   - *Italic* and **bold** text
+   - [Links](#) and images
+   - Code blocks
 
-## Contoh Kode
+### Code Example
 
-Berikut adalah contoh kode JavaScript:
+Here's a sample code snippet showing a JavaScript function:
 
 ```javascript
-function helloWorld() {
-  console.log("Hello from CMS integration!");
+function calculateReadTime(content) {
+  const wordsPerMinute = 200;
+  const wordCount = content.split(/\s+/).length;
+  const readTime = Math.ceil(wordCount / wordsPerMinute);
+  return readTime;
 }
-
-helloWorld();
 ```
 
-## Kesimpulan
+## Testing Images
 
-Dengan integrasi CMS yang berfungsi dengan baik, Anda dapat dengan mudah mengelola konten blog tanpa perlu mengedit kode secara langsung. Ini akan membuat proses pembaruan konten menjadi lebih efisien dan user-friendly. 
+Below is a placeholder for testing image display:
+
+![CMS Integration](/images/blog/cms-integration.jpg)
+
+## Blockquote Example
+
+> This is a blockquote to test styling and indentation. It should be properly formatted with a distinctive background and border.
+
+## Conclusion
+
+This sample article helps us verify that our CMS integration is working correctly and that all content elements are being rendered properly on the blog page. 
