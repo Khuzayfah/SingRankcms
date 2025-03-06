@@ -5,6 +5,7 @@ import './globals.css'
 import Navbar from './components/Navbar'
 import Footer from './components/Footer'
 import dynamic from 'next/dynamic'
+import Script from 'next/script'
 
 // Dynamically import components with browser-only features
 // This prevents hydration errors by ensuring they only load on the client
@@ -104,7 +105,7 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en" className={`${primaryFont.variable} scroll-smooth`}>
+    <html lang="en" className={`${primaryFont.variable} ${fontOption1.variable} ${fontOption3.variable} font-sans antialiased`}>
       <head>
         {/* Preconnect to critical origins */}
         <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -120,6 +121,9 @@ export default function RootLayout({
             opacity: 1;
           }
         `}} />
+
+        {/* Add Netlify Identity Widget for CMS authentication */}
+        <Script src="https://identity.netlify.com/v1/netlify-identity-widget.js" strategy="afterInteractive" />
       </head>
       <body className="font-sans">
         <div className="min-h-screen flex flex-col">
@@ -130,6 +134,21 @@ export default function RootLayout({
           <Footer />
           <ChatTerminal />
         </div>
+        
+        {/* Netlify Identity redirect script */}
+        <Script id="netlify-identity-redirect">
+          {`
+            if (window.netlifyIdentity) {
+              window.netlifyIdentity.on("init", user => {
+                if (!user) {
+                  window.netlifyIdentity.on("login", () => {
+                    document.location.href = "/admin/";
+                  });
+                }
+              });
+            }
+          `}
+        </Script>
       </body>
     </html>
   )

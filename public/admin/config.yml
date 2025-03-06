@@ -1,15 +1,6 @@
 backend:
-  name: github
-  repo: Khuzayfah/SingRankcms
+  name: git-gateway
   branch: main
-  base_url: https://api.netlify.com # Optional if you use Netlify for auth
-  auth_endpoint: auth # Optional if you use Netlify for auth
-
-# Optional: when using the Netlify backend, this setting enables Git Gateway for authentication
-# git-gateway should match the name of your Identity service on netlify
-#backend:
-#  name: git-gateway
-#  branch: main
 
 # Publish mode for editorial workflow
 publish_mode: editorial_workflow
