@@ -1,5 +1,5 @@
 ---
-title: Testing CMS Integration with Next.js
+title: "1111"
 date: 2025-03-07
 thumbnail: /images/blog/cms-integration.jpg
 description: A sample article to demonstrate the CMS integration features and
