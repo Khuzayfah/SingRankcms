@@ -48,6 +48,15 @@ const nextConfig = {
     // Improve middleware performance
     instrumentationHook: true,
   },
+  // Add rewrites for admin route
+  async rewrites() {
+    return [
+      {
+        source: '/admin',
+        destination: '/admin/index.html',
+      },
+    ];
+  },
   // Configure headers for better security and performance
   async headers() {
     return [
