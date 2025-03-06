@@ -182,9 +182,9 @@ export default function BlogPost({ params }: { params: { id: string } }) {
       </section>
       
       {/* Article Content */}
-      <section className="container mx-auto px-4 py-8">
+      <section className="container mx-auto px-4 py-8 bg-white">
         <div className="max-w-3xl mx-auto">
-          <article className="prose prose-lg max-w-none
+          <article className="prose prose-lg max-w-none text-gray-900
             prose-headings:text-[#d13239] prose-headings:font-bold
             prose-h1:text-4xl prose-h1:mb-6
             prose-h2:text-3xl prose-h2:mt-8 prose-h2:mb-4
@@ -198,7 +198,7 @@ export default function BlogPost({ params }: { params: { id: string } }) {
             prose-blockquote:border-l-[#d13239] prose-blockquote:text-gray-900 prose-blockquote:bg-gray-50 prose-blockquote:p-4
             prose-ul:text-gray-900 prose-ol:text-gray-900
             prose-li:text-gray-900 prose-li:mb-2">
-            <div dangerouslySetInnerHTML={{ __html: transformMarkdownToHTML(post.content) }} />
+            <div dangerouslySetInnerHTML={{ __html: transformMarkdownToHTML(post.content) }} className="text-gray-900" />
           </article>
           
           <div className="flex items-center justify-between mt-12 py-8 border-t border-b border-gray-100">
@@ -302,20 +302,20 @@ export default function BlogPost({ params }: { params: { id: string } }) {
 function transformMarkdownToHTML(markdown: string): string {
   // Basic transformation for now - this should be replaced with a proper markdown parser
   return markdown
-    .replace(/^# (.*$)/gm, '<h1>$1</h1>')
-    .replace(/^## (.*$)/gm, '<h2>$1</h2>')
-    .replace(/^### (.*$)/gm, '<h3>$1</h3>')
-    .replace(/^#### (.*$)/gm, '<h4>$1</h4>')
-    .replace(/^##### (.*$)/gm, '<h5>$1</h5>')
-    .replace(/^###### (.*$)/gm, '<h6>$1</h6>')
-    .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-    .replace(/\*(.*?)\*/g, '<em>$1</em>')
-    .replace(/!\[(.*?)\]\((.*?)\)/g, '<img alt="$1" src="$2" class="rounded-xl shadow-md" />')
+    .replace(/^# (.*$)/gm, '<h1 class="text-[#d13239] font-bold">$1</h1>')
+    .replace(/^## (.*$)/gm, '<h2 class="text-[#d13239] font-bold">$1</h2>')
+    .replace(/^### (.*$)/gm, '<h3 class="text-[#d13239] font-bold">$1</h3>')
+    .replace(/^#### (.*$)/gm, '<h4 class="text-[#d13239] font-bold">$1</h4>')
+    .replace(/^##### (.*$)/gm, '<h5 class="text-[#d13239] font-bold">$1</h5>')
+    .replace(/^###### (.*$)/gm, '<h6 class="text-[#d13239] font-bold">$1</h6>')
+    .replace(/\*\*(.*?)\*\*/g, '<strong class="text-[#d13239] font-bold">$1</strong>')
+    .replace(/\*(.*?)\*/g, '<em class="text-gray-900">$1</em>')
+    .replace(/!\[(.*?)\]\((.*?)\)/g, '<img alt="$1" src="$2" class="rounded-xl shadow-md aspect-square object-cover" />')
     .replace(/\[(.*?)\]\((.*?)\)/g, '<a href="$2" class="text-[#d13239] hover:underline">$1</a>')
-    .replace(/^\> (.*$)/gm, '<blockquote>$1</blockquote>')
-    .replace(/^- (.*$)/gm, '<ul><li>$1</li></ul>')
-    .replace(/^(\d+)\. (.*$)/gm, '<ol><li>$2</li></ol>')
-    .replace(/^(?!\<[uo]l\>)(.+?)(?!\<\/[uo]l\>)$/gm, '<p>$1</p>')
+    .replace(/^\> (.*$)/gm, '<blockquote class="border-l-4 border-[#d13239] pl-4 py-2 my-4 bg-gray-50 text-gray-900">$1</blockquote>')
+    .replace(/^- (.*$)/gm, '<ul class="list-disc pl-4 text-gray-900"><li class="text-gray-900">$1</li></ul>')
+    .replace(/^(\d+)\. (.*$)/gm, '<ol class="list-decimal pl-4 text-gray-900"><li class="text-gray-900">$2</li></ol>')
+    .replace(/^(?!\<[uo]l\>)(.+?)(?!\<\/[uo]l\>)$/gm, '<p class="text-gray-900 mb-4">$1</p>')
     .replace(/<\/ul>\s*<ul>/g, '')
     .replace(/<\/ol>\s*<ol>/g, '')
     .replace(/\n\n/g, '<br><br>');
