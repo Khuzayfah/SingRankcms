@@ -1,0 +1,5 @@
+[33mcommit 68f54c811c02a43a8295c7412cf212feac8bee05[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m)[m
+Author: Oneiros|Redo <naturalgifts.sg@gmail.com>
+Date:   Thu Mar 6 14:08:21 2025 +0700
+
+    Fix: Removed ErrorBoundary from layout to fix build issues and ensure CMS compatibility
