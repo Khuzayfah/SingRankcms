@@ -48,15 +48,34 @@ const nextConfig = {
     // Improve middleware performance
     instrumentationHook: true,
   },
-  // Add rewrites for admin route
+  
+  // Improved configuration for admin routes
   async rewrites() {
-    return [
-      {
-        source: '/admin',
-        destination: '/admin/index.html',
-      },
-    ];
+    return {
+      beforeFiles: [
+        // Ensure static files in /admin directory are properly served
+        {
+          source: '/admin/:path*',
+          destination: '/admin/:path*',
+          has: [
+            {
+              type: 'header',
+              key: 'accept',
+              value: '(.*text/html.*)',
+            },
+          ],
+        },
+      ],
+      afterFiles: [
+        // Fallback for /admin to go to the static admin page
+        {
+          source: '/admin',
+          destination: '/admin/index.html',
+        },
+      ],
+    };
   },
+  
   // Configure headers for better security and performance
   async headers() {
     return [

@@ -105,7 +105,7 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en" className={`${primaryFont.variable} ${fontOption1.variable} ${fontOption3.variable} font-sans antialiased`}>
+    <html lang="en" className={`${primaryFont.variable} scroll-smooth`}>
       <head>
         {/* Preconnect to critical origins */}
         <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -121,9 +121,6 @@ export default function RootLayout({
             opacity: 1;
           }
         `}} />
-
-        {/* Add Netlify Identity Widget for CMS authentication */}
-        <Script src="https://identity.netlify.com/v1/netlify-identity-widget.js" strategy="afterInteractive" />
       </head>
       <body className="font-sans">
         <div className="min-h-screen flex flex-col">
@@ -135,8 +132,11 @@ export default function RootLayout({
           <ChatTerminal />
         </div>
         
-        {/* Netlify Identity redirect script */}
-        <Script id="netlify-identity-redirect">
+        {/* Add Netlify Identity Widget - moved to bottom of body for better compatibility */}
+        <Script src="https://identity.netlify.com/v1/netlify-identity-widget.js" strategy="lazyOnload" />
+        
+        {/* Netlify Identity redirect script - simplified */}
+        <Script id="netlify-identity-redirect" strategy="lazyOnload">
           {`
             if (window.netlifyIdentity) {
               window.netlifyIdentity.on("init", user => {
