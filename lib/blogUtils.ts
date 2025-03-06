@@ -24,6 +24,7 @@ export interface BlogPost {
     image: string;
   };
   slug: string;
+  tableOfContents?: string;
 }
 
 // Define content directory
@@ -53,6 +54,7 @@ async function parseMarkdownFile(filePath: string): Promise<{
     title: string;
     image: string;
   };
+  tableOfContents?: string;
 }> {
   const fileContents = fs.readFileSync(filePath, 'utf8');
   const { data, content } = matter(fileContents);
@@ -62,28 +64,102 @@ async function parseMarkdownFile(filePath: string): Promise<{
     .use(html)
     .process(content);
 
-  // Add custom styling to HTML elements
+  // Extract headings for potential table of contents
+  const headings: {level: number; text: string; id: string}[] = [];
+  const headingRegex = /<h([1-6])>(.*?)<\/h\1>/g;
+  let match;
+  
+  // Clone the processed content to use for heading extraction
+  const contentString = processedContent.toString();
+  
+  while ((match = headingRegex.exec(contentString)) !== null) {
+    const level = parseInt(match[1]);
+    const text = match[2];
+    // Create an id from the heading text for anchor links
+    const id = text.toLowerCase().replace(/[^\w\s]/g, '').replace(/\s+/g, '-');
+    
+    // Only include h2, h3, and h4 headings in TOC
+    if (level >= 2 && level <= 4) {
+      headings.push({ level, text, id });
+    }
+  }
+
+  // Generate Table of Contents HTML
+  let tableOfContents = '';
+  if (headings.length > 0) {
+    tableOfContents = '<div class="toc-container bg-gray-50 rounded-lg border border-gray-100 p-5 mb-8">';
+    tableOfContents += '<h3 class="text-lg font-bold mb-3 text-gray-900">Table of Contents</h3>';
+    tableOfContents += '<nav class="toc text-[#d13239] mb-2">';
+    tableOfContents += '<ul class="space-y-1 text-sm">';
+    
+    headings.forEach(heading => {
+      const indent = heading.level > 2 ? `ml-${(heading.level - 2) * 3}` : '';
+      tableOfContents += `<li class="${indent}"><a href="#${heading.id}" class="hover:underline text-[#d13239] transition-colors">${heading.text}</a></li>`;
+    });
+    
+    tableOfContents += '</ul>';
+    tableOfContents += '</nav>';
+    tableOfContents += '</div>';
+  }
+
+  // Add custom styling to HTML elements with better readability and professional look
   const styledContent = processedContent.toString()
-    .replace(/<h([1-6])>(.*?)<\/h\1>/g, (_, level, content) => 
-      `<h${level} class="text-[#d13239] font-bold">${content}</h${level}>`)
-    .replace(/<strong>(.*?)<\/strong>/g, 
-      '<strong class="text-[#d13239] font-bold">$1</strong>')
-    .replace(/<em>(.*?)<\/em>/g, 
-      '<em class="text-gray-900">$1</em>')
-    .replace(/<img(.*?)>/g, 
-      '<div class="relative w-full aspect-square mb-6"><img$1 class="rounded-xl shadow-md object-cover w-full h-full" loading="lazy" /></div>')
-    .replace(/<a(.*?)>(.*?)<\/a>/g, 
-      '<a$1 class="text-[#d13239] hover:underline">$2</a>')
-    .replace(/<blockquote>(.*?)<\/blockquote>/g, 
-      '<blockquote class="border-l-4 border-[#d13239] pl-4 py-2 my-4 bg-gray-50 text-gray-900">$1</blockquote>')
-    .replace(/<(ul|ol)>(.*?)<\/\1>/g, (_, type, content) => 
-      `<${type} class="list-${type === 'ul' ? 'disc' : 'decimal'} pl-4 text-gray-900">${content
-        .replace(/<li>(.*?)<\/li>/g, '<li class="text-gray-900">$1</li>')
-      }</${type}>`)
+    // Headings with IDs for anchor links and consistent styling
+    .replace(/<h([1-6])>(.*?)<\/h\1>/g, (_, level, content) => {
+      const id = content.toLowerCase().replace(/[^\w\s]/g, '').replace(/\s+/g, '-');
+      const margin = level === '1' ? 'mb-8 mt-10' : 'mb-4 mt-8';
+      const sizes: Record<string, string> = {
+        '1': 'text-4xl',
+        '2': 'text-3xl pb-2 border-b border-gray-100',
+        '3': 'text-2xl',
+        '4': 'text-xl',
+        '5': 'text-lg',
+        '6': 'text-base'
+      };
+      const size = sizes[level] || 'text-lg';
+      
+      return `<h${level} id="${id}" class="${size} font-bold text-gray-900 ${margin}">${content}</h${level}>`;
+    })
+    
+    // Paragraphs with better line height and spacing
     .replace(/<p>(.*?)<\/p>/g, 
-      '<p class="text-gray-900 mb-4">$1</p>')
+      '<p class="text-gray-800 my-6 leading-relaxed text-base lg:text-lg">$1</p>')
+    
+    // Emphasis and strong elements
+    .replace(/<em>(.*?)<\/em>/g, 
+      '<em class="text-gray-800 italic">$1</em>')
+    .replace(/<strong>(.*?)<\/strong>/g, 
+      '<strong class="font-bold text-gray-900">$1</strong>')
+    
+    // Improve links
+    .replace(/<a(.*?)>(.*?)<\/a>/g, 
+      '<a$1 class="text-[#d13239] font-medium hover:underline transition-colors">$2</a>')
+    
+    // Style images with better layout and responsive design
+    .replace(/<img(.*?)>/g, 
+      '<div class="my-8"><img$1 class="rounded-lg shadow-md w-full object-cover mx-auto" loading="lazy" /></div>')
+    
+    // Blockquotes with a professional design
+    .replace(/<blockquote>(.*?)<\/blockquote>/g, 
+      '<blockquote class="border-l-4 border-[#d13239] bg-gray-50 py-4 px-6 my-6 rounded-r-lg text-gray-800 italic">$1</blockquote>')
+    
+    // Lists with better spacing
+    .replace(/<(ul|ol)>(.*?)<\/\1>/g, (_, type, content) => 
+      `<${type} class="list-${type === 'ul' ? 'disc' : 'decimal'} pl-6 my-6 space-y-2 text-gray-800">${content
+        .replace(/<li>(.*?)<\/li>/g, '<li class="text-gray-800 pl-2">$1</li>')
+      }</${type}>`)
+    
+    // Code blocks with syntax highlighting styles
     .replace(/<pre><code>(.*?)<\/code><\/pre>/g, 
-      '<pre class="bg-gray-50 p-4 rounded-lg overflow-x-auto"><code class="text-[#d13239]">$1</code></pre>');
+      '<pre class="bg-gray-900 text-gray-100 p-4 rounded-lg overflow-x-auto my-6"><code class="text-sm">$1</code></pre>')
+    
+    // Inline code
+    .replace(/<code>(.*?)<\/code>/g, 
+      '<code class="bg-gray-100 text-[#d13239] px-1.5 py-0.5 rounded text-sm font-mono">$1</code>')
+    
+    // Horizontal rules
+    .replace(/<hr>/g,
+      '<hr class="my-8 border-t border-gray-200" />');
   
   // Calculate read time (assuming average reading speed of 200 words per minute)
   const wordCount = content.split(/\s+/).length;
@@ -104,7 +180,8 @@ async function parseMarkdownFile(filePath: string): Promise<{
       name: data.author?.name || 'SingRank Team',
       title: data.author?.title || 'Content Team',
       image: data.author?.image || '/images/authors/default.jpg'
-    }
+    },
+    tableOfContents
   };
 }
 
@@ -113,6 +190,8 @@ export const getAllBlogPosts = cache(async (): Promise<BlogPost[]> => {
   ensureDirectoryExists(BLOG_DIR);
   
   const files = fs.readdirSync(BLOG_DIR);
+  console.log(`Found ${files.length} files in blog directory: ${JSON.stringify(files)}`);
+  
   const posts = await Promise.all(
     files
       .filter(file => file.endsWith('.md'))
@@ -138,7 +217,8 @@ export const getAllBlogPosts = cache(async (): Promise<BlogPost[]> => {
             name: fileData.author?.name || 'SingRank Team',
             title: fileData.author?.title || 'Content Team',
             image: fileData.author?.image || '/images/authors/default.jpg'
-          }
+          },
+          tableOfContents: fileData.tableOfContents
         };
       })
   );
@@ -149,10 +229,37 @@ export const getAllBlogPosts = cache(async (): Promise<BlogPost[]> => {
 
 // Get post by slug
 export const getBlogPostBySlug = cache(async (slug: string): Promise<BlogPost | null> => {
-  const filePath = path.join(BLOG_DIR, `${slug}.md`);
+  // First try direct match
+  let filePath = path.join(BLOG_DIR, `${slug}.md`);
   
+  // If file doesn't exist, try to find a file that ends with the slug
   if (!fs.existsSync(filePath)) {
-    return null;
+    const files = fs.readdirSync(BLOG_DIR);
+    
+    // Try different matching strategies
+    let matchingFile = files.find(file => file.endsWith(`-${slug}.md`));
+    
+    // If not found, try to find a file that contains the slug
+    if (!matchingFile) {
+      matchingFile = files.find(file => file.includes(slug));
+    }
+    
+    // If not found, try to find a file with the same ID
+    if (!matchingFile) {
+      matchingFile = files.find(file => {
+        const fileSlug = file.replace(/\.md$/, '');
+        return fileSlug === slug;
+      });
+    }
+    
+    if (matchingFile) {
+      filePath = path.join(BLOG_DIR, matchingFile);
+      slug = matchingFile.replace(/\.md$/, '');
+    } else {
+      console.log(`No matching file found for slug: ${slug}`);
+      console.log(`Available files: ${files.join(', ')}`);
+      return null;
+    }
   }
   
   const fileData = await parseMarkdownFile(filePath);
@@ -173,7 +280,8 @@ export const getBlogPostBySlug = cache(async (slug: string): Promise<BlogPost | 
       name: fileData.author?.name || 'SingRank Team',
       title: fileData.author?.title || 'Content Team',
       image: fileData.author?.image || '/images/authors/default.jpg'
-    }
+    },
+    tableOfContents: fileData.tableOfContents
   };
 });
 

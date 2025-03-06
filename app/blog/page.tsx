@@ -102,7 +102,7 @@ export default async function Blog() {
                 key={post.id}
                 className="rounded-xl overflow-hidden shadow-lg group bg-white border border-gray-100 hover:shadow-xl transition-all duration-300"
               >
-                <Link href={`/blog/${post.slug}`} className="block">
+                <Link href={`/blog/${post.slug ? (post.slug.includes('-') ? post.slug.split('-').slice(-1)[0] : post.slug) : post.id}`} className="block">
                   <div className="relative aspect-square overflow-hidden">
                     <div className="absolute inset-0 bg-[#d13239]/80 flex items-center justify-center z-10 opacity-0 group-hover:opacity-90 transition-opacity duration-300">
                       <span className="text-white font-medium flex items-center">
@@ -167,7 +167,7 @@ export default async function Blog() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {blogPosts.map(post => (
             <div key={post.id} className="bg-white rounded-xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 group">
-              <Link href={`/blog/${post.slug}`} className="block">
+              <Link href={`/blog/${post.slug ? (post.slug.includes('-') ? post.slug.split('-').slice(-1)[0] : post.slug) : post.id}`} className="block">
                 <div className="relative aspect-square overflow-hidden">
                   <Image 
                     src={post.image || '/images/blog/default.jpg'}
