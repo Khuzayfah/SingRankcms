@@ -21,8 +21,9 @@ import { notFound } from 'next/navigation';
 import StructuredData from '../../components/StructuredData';
 import type { BlogPost } from '../../../lib/blogUtils';
 
-// Revalidate every 60 seconds
-export const revalidate = 60;
+// Set to no-caching to ensure fresh content
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
 
 // Generate static params for all blog posts
 export async function generateStaticParams() {

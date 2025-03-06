@@ -19,8 +19,9 @@ import { FiSearch, FiClock, FiCalendar, FiArrowRight } from 'react-icons/fi';
 import { getAllBlogPosts } from '../../lib/blogUtils';
 import type { BlogPost } from '../../lib/blogUtils';
 
-// Revalidate every 60 seconds
-export const revalidate = 60;
+// Set to no-caching to ensure fresh content
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
 
 // Generate metadata for SEO
 export async function generateMetadata() {

@@ -56,8 +56,12 @@ async function parseMarkdownFile(filePath: string): Promise<{
   };
   tableOfContents?: string;
 }> {
-  const fileContents = fs.readFileSync(filePath, 'utf8');
+  // Read the file with utf8 encoding and force reload from disk instead of cache
+  const fileContents = fs.readFileSync(filePath, { encoding: 'utf8', flag: 'r' });
   const { data, content } = matter(fileContents);
+  
+  console.log(`Parsing markdown file: ${filePath}`);
+  console.log(`File frontmatter: ${JSON.stringify(data, null, 2)}`);
   
   // Process markdown content
   const processedContent = await remark()
@@ -189,15 +193,19 @@ async function parseMarkdownFile(filePath: string): Promise<{
 export const getAllBlogPosts = cache(async (): Promise<BlogPost[]> => {
   ensureDirectoryExists(BLOG_DIR);
   
-  const files = fs.readdirSync(BLOG_DIR);
-  console.log(`Found ${files.length} files in blog directory: ${JSON.stringify(files)}`);
+  // Clear cache by forcing filesystem reads
+  const files = fs.readdirSync(BLOG_DIR, { withFileTypes: true });
+  const fileNames = files.filter(file => file.isFile() && file.name.endsWith('.md')).map(file => file.name);
+  console.log(`Found ${fileNames.length} files in blog directory: ${JSON.stringify(fileNames)}`);
   
   const posts = await Promise.all(
-    files
-      .filter(file => file.endsWith('.md'))
+    fileNames
       .map(async (file) => {
         const filePath = path.join(BLOG_DIR, file);
+        const stats = fs.statSync(filePath);
         const slug = file.replace(/\.md$/, '');
+        
+        console.log(`Processing file: ${file}, Last modified: ${stats.mtime.toISOString()}`);
         const fileData = await parseMarkdownFile(filePath);
         
         return {
@@ -206,7 +214,7 @@ export const getAllBlogPosts = cache(async (): Promise<BlogPost[]> => {
           title: fileData.title,
           description: fileData.description,
           date: fileData.date,
-          modifiedDate: fileData.modifiedDate,
+          modifiedDate: fileData.modifiedDate || stats.mtime.toISOString(),
           category: fileData.category,
           image: fileData.image,
           content: fileData.content,
@@ -227,10 +235,14 @@ export const getAllBlogPosts = cache(async (): Promise<BlogPost[]> => {
   return posts.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
 });
 
-// Get post by slug
+// Get post by slug - with forced cache refresh
 export const getBlogPostBySlug = cache(async (slug: string): Promise<BlogPost | null> => {
   console.log(`Attempting to find blog post with slug: ${slug}`);
   ensureDirectoryExists(BLOG_DIR);
+  
+  // Force directory reread to get fresh file list
+  const files = fs.readdirSync(BLOG_DIR, { withFileTypes: true });
+  const fileNames = files.filter(file => file.isFile() && file.name.endsWith('.md')).map(file => file.name);
   
   // First try direct match
   let filePath = path.join(BLOG_DIR, `${slug}.md`);
@@ -239,16 +251,15 @@ export const getBlogPostBySlug = cache(async (slug: string): Promise<BlogPost | 
   // If file doesn't exist, try to find a file that matches the slug
   if (!fs.existsSync(filePath)) {
     console.log(`No direct match found for ${filePath}, trying alternative methods`);
-    const files = fs.readdirSync(BLOG_DIR);
-    console.log(`Available blog files: ${files.join(', ')}`);
+    console.log(`Available blog files: ${fileNames.join(', ')}`);
     
     // Different matching strategies, in order of priority
     // 1. Exact match with the slug
-    let matchingFile = files.find(file => file.replace(/\.md$/, '') === slug);
+    let matchingFile = fileNames.find(file => file.replace(/\.md$/, '') === slug);
     
     // 2. Match with the format YYYY-MM-DD-slug.md (common in CMS)
     if (!matchingFile) {
-      matchingFile = files.find(file => {
+      matchingFile = fileNames.find(file => {
         const parts = file.replace(/\.md$/, '').split('-');
         // If we have enough parts for a date (YYYY-MM-DD) + slug format
         if (parts.length >= 4) {
@@ -262,12 +273,12 @@ export const getBlogPostBySlug = cache(async (slug: string): Promise<BlogPost | 
     
     // 3. Check if the slug appears at the end of the filename
     if (!matchingFile) {
-      matchingFile = files.find(file => file.endsWith(`-${slug}.md`));
+      matchingFile = fileNames.find(file => file.endsWith(`-${slug}.md`));
     }
     
     // 4. Check if the slug appears anywhere in the filename
     if (!matchingFile) {
-      matchingFile = files.find(file => file.includes(slug));
+      matchingFile = fileNames.find(file => file.includes(slug));
     }
     
     // If a matching file is found, update the file path
@@ -282,6 +293,10 @@ export const getBlogPostBySlug = cache(async (slug: string): Promise<BlogPost | 
   }
   
   try {
+    // Get file stats to check modified time
+    const stats = fs.statSync(filePath);
+    console.log(`Processing file: ${filePath}, Last modified: ${stats.mtime.toISOString()}`);
+    
     const fileData = await parseMarkdownFile(filePath);
     console.log(`Successfully parsed file for slug: ${fileSlug}`);
     
@@ -291,7 +306,7 @@ export const getBlogPostBySlug = cache(async (slug: string): Promise<BlogPost | 
       title: fileData.title,
       description: fileData.description,
       date: fileData.date,
-      modifiedDate: fileData.modifiedDate,
+      modifiedDate: fileData.modifiedDate || stats.mtime.toISOString(),
       category: fileData.category,
       image: fileData.image,
       content: fileData.content,
