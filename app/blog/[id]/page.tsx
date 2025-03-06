@@ -185,18 +185,19 @@ export default function BlogPost({ params }: { params: { id: string } }) {
       <section className="container mx-auto px-4 py-8">
         <div className="max-w-3xl mx-auto">
           <article className="prose prose-lg max-w-none
-            prose-headings:text-[#d13239] 
-            prose-h1:text-4xl prose-h1:font-bold
-            prose-h2:text-3xl prose-h2:font-bold
-            prose-h3:text-2xl prose-h3:font-bold
-            prose-p:text-gray-700 prose-p:leading-relaxed
+            prose-headings:text-[#d13239] prose-headings:font-bold
+            prose-h1:text-4xl prose-h1:mb-6
+            prose-h2:text-3xl prose-h2:mt-8 prose-h2:mb-4
+            prose-h3:text-2xl prose-h3:mt-6 prose-h3:mb-4
+            prose-p:text-gray-900 prose-p:leading-relaxed prose-p:mb-4
             prose-a:text-[#d13239] prose-a:no-underline hover:prose-a:underline
-            prose-strong:text-gray-900
+            prose-strong:text-[#d13239] prose-strong:font-bold
             prose-code:text-[#d13239] prose-code:bg-gray-50 prose-code:px-1 prose-code:rounded
             prose-pre:bg-gray-50 prose-pre:text-gray-900
             prose-img:rounded-xl prose-img:shadow-md prose-img:aspect-square prose-img:object-cover
-            prose-blockquote:border-[#d13239] prose-blockquote:text-gray-700
-            prose-ul:text-gray-700 prose-ol:text-gray-700">
+            prose-blockquote:border-l-[#d13239] prose-blockquote:text-gray-900 prose-blockquote:bg-gray-50 prose-blockquote:p-4
+            prose-ul:text-gray-900 prose-ol:text-gray-900
+            prose-li:text-gray-900 prose-li:mb-2">
             <div dangerouslySetInnerHTML={{ __html: transformMarkdownToHTML(post.content) }} />
           </article>
           
