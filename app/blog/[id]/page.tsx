@@ -20,7 +20,6 @@ import { getBlogPostBySlug, getAllBlogPosts } from '../../../lib/blogUtils';
 import { notFound } from 'next/navigation';
 import StructuredData from '../../components/StructuredData';
 import type { BlogPost } from '../../../lib/blogUtils';
-import ShareButton from '../../components/ShareButton';
 
 // Set to no-caching to ensure fresh content
 export const dynamic = 'force-dynamic';
@@ -249,14 +248,6 @@ export default async function BlogPost({ params }: { params: { id: string } }) {
                     </div>
                   </div>
                 )}
-                
-                {/* Share Article */}
-                <div className="mt-8 pt-6 border-t border-gray-100">
-                  <h3 className="text-lg font-bold mb-3 text-gray-900">Share this article</h3>
-                  <div className="flex space-x-3">
-                    <ShareButton title={post.title} />
-                  </div>
-                </div>
               </div>
             </div>
             

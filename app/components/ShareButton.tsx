@@ -5,15 +5,13 @@ import { FiShare2 } from 'react-icons/fi';
 
 interface ShareButtonProps {
   title: string;
-  url?: string;
 }
 
-export default function ShareButton({ title, url }: ShareButtonProps) {
+export default function ShareButton({ title }: ShareButtonProps) {
   const handleShare = () => {
-    // Get the current URL if not provided
-    const shareUrl = url || window.location.href;
+    if (typeof window === 'undefined') return;
     
-    // Open Twitter share dialog
+    const shareUrl = window.location.href;
     window.open(
       `https://twitter.com/intent/tweet?url=${encodeURIComponent(shareUrl)}&text=${encodeURIComponent(title)}`,
       '_blank'
