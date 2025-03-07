@@ -22,7 +22,9 @@
     "fix-blog-paths": "node scripts/fix-blog-paths.js",
     "prebuild:netlify": "npm run fix-blog-paths",
     "lighthouse": "cross-env ANALYZE=false NODE_ENV=production next build && next start",
-    "pwa:setup": "node scripts/generate-pwa-icons.js"
+    "pwa:setup": "node scripts/generate-pwa-icons.js",
+    "pwa:convert-icons": "node scripts/convert-icons-to-png.js",
+    "pwa:prepare": "npm run pwa:setup && npm run pwa:convert-icons"
   },
   "dependencies": {
     "@emotion/is-prop-valid": "1.3.1",
