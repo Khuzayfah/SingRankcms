@@ -1,12 +1,16 @@
-import { Organization, WebSite, Article, BreadcrumbList } from 'schema-dts';
+import React from 'react';
+import { Article, BreadcrumbList, Organization, WebSite, WithContext } from 'schema-dts';
 
 interface StructuredDataProps {
-  type: 'organization' | 'website' | 'article' | 'breadcrumb';
+  type: 'article' | 'breadcrumb' | 'product' | 'faq' | 'organization' | 'website';
   data: any;
 }
 
+/**
+ * Component for adding structured data (JSON-LD) to pages for better SEO
+ */
 export default function StructuredData({ type, data }: StructuredDataProps) {
-  let structuredData = {};
+  let structuredData: WithContext<any> | null = null;
 
   switch (type) {
     case 'organization':
@@ -36,9 +40,9 @@ export default function StructuredData({ type, data }: StructuredDataProps) {
           'https://twitter.com/singrank',
           'https://www.linkedin.com/company/singrank'
         ]
-      };
+      } as WithContext<Organization>;
       break;
-
+      
     case 'website':
       structuredData = {
         '@context': 'https://schema.org',
@@ -53,7 +57,7 @@ export default function StructuredData({ type, data }: StructuredDataProps) {
           },
           'query-input': 'required name=search_term_string'
         }
-      };
+      } as WithContext<WebSite>;
       break;
 
     case 'article':
@@ -62,7 +66,9 @@ export default function StructuredData({ type, data }: StructuredDataProps) {
         '@type': 'Article',
         headline: data.title,
         description: data.description,
-        image: data.image,
+        image: data.image ? [data.image] : undefined,
+        datePublished: data.date,
+        dateModified: data.modifiedDate || data.date,
         author: {
           '@type': 'Person',
           name: data.author
@@ -75,13 +81,11 @@ export default function StructuredData({ type, data }: StructuredDataProps) {
             url: 'https://singrank.com/images/logo.png'
           }
         },
-        datePublished: data.date,
-        dateModified: data.modifiedDate || data.date,
         mainEntityOfPage: {
           '@type': 'WebPage',
           '@id': `https://singrank.com/blog/${data.slug}`
         }
-      };
+      } as WithContext<Article>;
       break;
 
     case 'breadcrumb':
@@ -94,9 +98,15 @@ export default function StructuredData({ type, data }: StructuredDataProps) {
           name: item.name,
           item: item.url
         }))
-      };
+      } as WithContext<BreadcrumbList>;
       break;
+
+    // Other schema types could be added here
+    default:
+      return null;
   }
+
+  if (!structuredData) return null;
 
   return (
     <script

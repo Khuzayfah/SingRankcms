@@ -48,8 +48,12 @@ export default async function Blog() {
   // Get blog posts from CMS
   const blogPosts = await getAllBlogPosts();
   
-  // Get featured posts
+  // Log posts count for debugging
+  console.log(`Blog page: Fetched ${blogPosts.length} posts`);
+  
+  // Split posts into featured and regular
   const featuredPosts = blogPosts.filter(post => post.featured);
+  const regularPosts = blogPosts.filter(post => !post.featured);
   
   // Blog categories for filtering
   const allCategories = Array.from(new Set(blogPosts.map(post => post.category)));
