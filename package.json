@@ -9,9 +9,13 @@
     "build:analyze": "cross-env ANALYZE=true next build",
     "build:skipcheck": "next build --no-lint",
     "start": "next start",
+    "start:win": "powershell -File scripts/run-start.ps1",
+    "start:win:3001": "powershell -File scripts/run-start.ps1 -Port 3001",
+    "start:win:3002": "powershell -File scripts/run-start.ps1 -Port 3002",
     "lint": "next lint",
     "clean": "rimraf .next",
     "dev:clean": "npm run clean && npm run dev",
+    "dev:win": "powershell -File scripts/run-dev.ps1",
     "build:clean": "npm run clean && npm run build",
     "analyze": "cross-env ANALYZE=true next build",
     "predev": "npm run clean",
@@ -28,7 +32,8 @@
     "pwa:prepare": "npm run pwa:setup && npm run pwa:convert-icons",
     "optimize:js": "node scripts/optimize-js.js",
     "optimize:dom": "node scripts/optimize-dom.js",
-    "optimize": "npm run optimize:js && npm run optimize:dom"
+    "optimize": "npm run optimize:js && npm run optimize:dom",
+    "killport:3000": "powershell -Command \"Get-Process -Id (Get-NetTCPConnection -LocalPort 3000).OwningProcess | Stop-Process -Force\""
   },
   "dependencies": {
     "@emotion/is-prop-valid": "1.3.1",

@@ -81,8 +81,6 @@ const nextConfig = {
     // Improved chunking strategy
     // Enable automatic page bundling and smarter code splitting
     largePageDataBytes: 128 * 1000, // 128kb
-    // Reduce CSS render blocking with nextScriptWorkers
-    nextScriptWorkers: true,
   },
   
   // Improved configuration for admin routes
