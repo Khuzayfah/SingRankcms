@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "build:netlify": "node scripts/prepare-blog-for-netlify.js && next build",
+    "build:netlify": "node scripts/prepare-blog-for-netlify.js && node scripts/ensure-blog-dirs.js && next build",
     "build:analyze": "cross-env ANALYZE=true next build",
     "build:skipcheck": "next build --no-lint",
     "start": "next start",
@@ -20,6 +20,7 @@
     "setup-blog": "node scripts/setup-blog.js",
     "deploy": "npm run build:netlify && netlify deploy --prod",
     "fix-blog-paths": "node scripts/fix-blog-paths.js",
+    "ensure-blog-dirs": "node scripts/ensure-blog-dirs.js",
     "prebuild:netlify": "npm run fix-blog-paths",
     "lighthouse": "cross-env ANALYZE=false NODE_ENV=production next build && next start",
     "pwa:setup": "node scripts/generate-pwa-icons.js",

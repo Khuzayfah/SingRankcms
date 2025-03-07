@@ -78,6 +78,52 @@ export default async function Blog() {
   const allCategories = Array.from(new Set(blogPosts.map(post => post.category)));
   const categories = ['All', ...allCategories];
 
+  // Early return with fallback UI if no posts
+  if (blogPosts.length === 0) {
+    return (
+      <main className="min-h-screen pt-20 pb-16 bg-gradient-to-b from-white to-gray-50">
+        {/* Hero Section */}
+        <section className="relative overflow-hidden">
+          <div className="absolute top-0 right-0 w-1/2 h-full bg-gradient-to-l from-[#fff1f1] to-transparent opacity-50 z-0"></div>
+          <div className="container mx-auto px-4 py-12 relative z-10">
+            <div className="max-w-4xl mx-auto text-center">
+              <h1 className="text-4xl md:text-5xl font-bold mb-6 text-gray-900">
+                Digital Marketing <span className="text-[#d13239]">Insights</span>
+              </h1>
+              <p className="text-xl text-gray-600 mb-8">
+                Stay updated with the latest trends, strategies, and industry insights from our expert team.
+              </p>
+              <div className="relative max-w-2xl mx-auto">
+                <div className="flex items-center bg-white rounded-full shadow-md border border-gray-100 p-2">
+                  <input
+                    type="text"
+                    placeholder="Search articles..."
+                    className="w-full px-4 py-2 text-gray-700 focus:outline-none bg-transparent"
+                    disabled
+                  />
+                  <button className="px-6 py-2 bg-[#d13239] text-white rounded-full hover:bg-[#a61b22] transition-colors" disabled>
+                    Search
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* No Posts Message */}
+        <section className="container mx-auto px-4 py-16 text-center">
+          <div className="bg-white p-8 rounded-xl shadow-sm border border-gray-100 max-w-3xl mx-auto">
+            <h2 className="text-2xl font-bold mb-4 text-gray-900">No Blog Posts Available</h2>
+            <p className="text-gray-600 mb-6">
+              We're currently working on creating amazing content for you. 
+              Please check back soon for updates and insights!
+            </p>
+          </div>
+        </section>
+      </main>
+    );
+  }
+
   return (
     <main className="min-h-screen pt-20 pb-16 bg-gradient-to-b from-white to-gray-50">
       {/* Hero Section */}

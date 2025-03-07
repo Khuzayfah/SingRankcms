@@ -224,38 +224,57 @@ async function parseMarkdownFile(filePath: string): Promise<{
 // Get all blog posts
 export async function getAllBlogPosts(): Promise<BlogPost[]> {
   try {
-    // Get the directory path from environment variable or use the default path
-    // For Netlify, check for blog posts in public/_posts directory in production
-    const postsDirectory = process.env.BLOG_POSTS_DIRECTORY || 
-      (process.env.NODE_ENV === 'production' 
+    console.log(`getAllBlogPosts called, NODE_ENV: ${process.env.NODE_ENV}`);
+    
+    // Define potential blog post directories to check
+    const potentialDirectories = [
+      // First priority: Check environment variable
+      process.env.BLOG_POSTS_DIRECTORY,
+      // Second priority: Check standard locations based on environment
+      process.env.NODE_ENV === 'production' 
         ? path.join(process.cwd(), 'public', '_posts')
-        : path.join(process.cwd(), '_posts'));
+        : path.join(process.cwd(), '_posts'),
+      // Fallbacks for Netlify
+      path.join(process.cwd(), '_posts'),
+      path.join(process.cwd(), 'posts'),
+      path.join(process.cwd(), 'public', 'posts'),
+      path.join(process.cwd(), 'public', 'blog'),
+      path.join(process.cwd(), 'blog')
+    ].filter(Boolean) as string[]; // Filter out undefined values
     
-    console.log(`Reading blog posts from directory: ${postsDirectory}`);
+    let postsDirectory = '';
+    let fileNames: string[] = [];
     
-    // Check if directory exists
-    if (!fs.existsSync(postsDirectory)) {
-      console.error(`Blog posts directory (${postsDirectory}) does not exist`);
-      // Check alternative location if in production
-      if (process.env.NODE_ENV === 'production') {
-        const altDirectory = path.join(process.cwd(), '_posts');
-        if (fs.existsSync(altDirectory)) {
-          console.log(`Falling back to directory: ${altDirectory}`);
-          const fileNames = fs.readdirSync(altDirectory).filter(fileName => {
-            return path.extname(fileName) === '.md';
+    // Try each directory until we find one that exists and has markdown files
+    for (const directory of potentialDirectories) {
+      try {
+        console.log(`Checking directory: ${directory}`);
+        if (fs.existsSync(directory)) {
+          const files = fs.readdirSync(directory).filter(fileName => {
+            return path.extname(fileName).toLowerCase() === '.md';
           });
-          console.log(`Found ${fileNames.length} markdown files in ${altDirectory}`);
+          
+          if (files.length > 0) {
+            postsDirectory = directory;
+            fileNames = files;
+            console.log(`Found ${files.length} markdown files in ${directory}`);
+            break;
+          } else {
+            console.log(`Directory ${directory} exists but contains no markdown files`);
+          }
+        } else {
+          console.log(`Directory ${directory} does not exist`);
         }
+      } catch (dirError) {
+        console.error(`Error accessing directory ${directory}:`, dirError);
       }
-      return [];
     }
     
-    // Get all markdown files in the directory
-    const fileNames = fs.readdirSync(postsDirectory).filter(fileName => {
-      return path.extname(fileName) === '.md';
-    });
-    
-    console.log(`Found ${fileNames.length} markdown files in ${postsDirectory}`);
+    // If no valid directory was found, return empty array or dummy data
+    if (!postsDirectory || fileNames.length === 0) {
+      console.error('No valid blog posts directory found with markdown files');
+      return [];
+    }
     
     // Parse each markdown file
     const allPostsData = await Promise.all(
@@ -318,49 +337,53 @@ export async function getAllBlogPosts(): Promise<BlogPost[]> {
 // Get post by slug - with forced cache refresh
 export async function getBlogPostBySlug(slug: string): Promise<BlogPost | null> {
   try {
-    console.log(`Getting blog post by slug: ${slug}`);
+    console.log(`Getting blog post by slug: ${slug}, NODE_ENV: ${process.env.NODE_ENV}`);
     
-    // For Netlify, check for blog posts in public/_posts directory in production
-    const postsDirectory = process.env.BLOG_POSTS_DIRECTORY || 
-      (process.env.NODE_ENV === 'production' 
+    // Define potential blog post directories to check
+    const potentialDirectories = [
+      // First priority: Check environment variable
+      process.env.BLOG_POSTS_DIRECTORY,
+      // Second priority: Check standard locations based on environment
+      process.env.NODE_ENV === 'production' 
         ? path.join(process.cwd(), 'public', '_posts')
-        : path.join(process.cwd(), '_posts'));
+        : path.join(process.cwd(), '_posts'),
+      // Fallbacks for Netlify
+      path.join(process.cwd(), '_posts'),
+      path.join(process.cwd(), 'posts'),
+      path.join(process.cwd(), 'public', 'posts'),
+      path.join(process.cwd(), 'public', 'blog'),
+      path.join(process.cwd(), 'blog')
+    ].filter(Boolean) as string[]; // Filter out undefined values
     
-    // Construct the file path
-    const fullPath = path.join(postsDirectory, `${slug}.md`);
+    let postFilePath = '';
     
-    // Check if the file exists
-    if (!fs.existsSync(fullPath)) {
-      console.error(`Blog post file not found: ${fullPath}`);
-      
-      // In production, try alternative locations
-      if (process.env.NODE_ENV === 'production') {
-        const altLocations = [
-          path.join(process.cwd(), '_posts', `${slug}.md`),
-          path.join(process.cwd(), 'posts', `${slug}.md`)
-        ];
-        
-        for (const altPath of altLocations) {
-          console.log(`Trying alternative path: ${altPath}`);
-          if (fs.existsSync(altPath)) {
-            console.log(`Found blog post at alternative path: ${altPath}`);
-            const postData = await parseMarkdownFile(altPath);
-            return {
-              id: slug,
-              slug,
-              ...postData
-            };
+    // Try to find the post in each directory
+    for (const directory of potentialDirectories) {
+      try {
+        if (fs.existsSync(directory)) {
+          const filePath = path.join(directory, `${slug}.md`);
+          console.log(`Checking for blog post at: ${filePath}`);
+          
+          if (fs.existsSync(filePath)) {
+            postFilePath = filePath;
+            console.log(`Found blog post at: ${filePath}`);
+            break;
           }
         }
+      } catch (dirError) {
+        console.error(`Error accessing directory ${directory}:`, dirError);
       }
-      
+    }
+    
+    // If post file wasn't found in any directory
+    if (!postFilePath) {
+      console.error(`Blog post with slug "${slug}" not found in any directory`);
       return null;
     }
     
-    console.log(`Reading blog post from file: ${fullPath}`);
-    
     // Parse the markdown file
-    const postData = await parseMarkdownFile(fullPath);
+    console.log(`Reading blog post from file: ${postFilePath}`);
+    const postData = await parseMarkdownFile(postFilePath);
     
     // Return the post data with the slug
     return {
