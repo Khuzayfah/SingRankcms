@@ -2,8 +2,15 @@
 
 import React, { useCallback, memo, useState, useEffect } from 'react';
 import { loadSlim } from "tsparticles-slim";
-import Particles from "react-tsparticles";
-import type { Engine } from "tsparticles-engine";
+import dynamic from 'next/dynamic';
+
+// Dynamically import Particles component with no SSR to reduce bundle size
+const Particles = dynamic(() => import("react-tsparticles"), { 
+  ssr: false,
+  loading: () => (
+    <div className="absolute inset-0 bg-gradient-to-b from-white to-luxury-red-50 opacity-50" />
+  )
+});
 
 /**
  * ParticlesContainer Component
@@ -16,38 +23,52 @@ import type { Engine } from "tsparticles-engine";
  * - Reduced particle count
  * - Simplified particle shapes
  * - Disabled collisions when on mobile
- * - Proper hydration handling
+ * - No SSR rendering to reduce bundle size
+ * - Uses requestIdleCallback for initialization
  */
 const ParticlesContainer = () => {
   // Prevent hydration mismatch by only rendering on client
   const [isClient, setIsClient] = useState(false);
-  
-  useEffect(() => {
-    setIsClient(true);
-  }, []);
+  const [isInitialized, setIsInitialized] = useState(false);
   
   // Detect if on mobile for performance optimizations
   const [isMobile, setIsMobile] = useState(false);
   
+  // Initialize component only when visible and on client
   useEffect(() => {
-    const checkIsMobile = () => {
-      setIsMobile(window.innerWidth < 768);
-    };
-    
-    // Set initial value
-    checkIsMobile();
-    
-    // Update on resize
-    window.addEventListener('resize', checkIsMobile);
-    
-    return () => {
-      window.removeEventListener('resize', checkIsMobile);
-    };
+    // Use requestIdleCallback for non-critical initialization
+    if (typeof window !== 'undefined') {
+      const requestIdleCallback = 
+        window.requestIdleCallback || 
+        ((cb) => setTimeout(cb, 1));
+      
+      requestIdleCallback(() => {
+        setIsClient(true);
+        setIsMobile(window.innerWidth < 768);
+
+        // Add resize detection with throttling
+        let resizeTimer: NodeJS.Timeout;
+        const handleResize = () => {
+          clearTimeout(resizeTimer);
+          resizeTimer = setTimeout(() => {
+            setIsMobile(window.innerWidth < 768);
+          }, 250); // Throttle resize event
+        };
+        
+        window.addEventListener('resize', handleResize);
+        return () => window.removeEventListener('resize', handleResize);
+      });
+    }
   }, []);
 
-  const particlesInit = useCallback(async (engine: Engine) => {
-    await loadSlim(engine);
-  }, []);
+  // Initialize particles engine only when component is visible
+  const particlesInit = useCallback(async (engine: any) => {
+    // Wait until browser is idle to initialize
+    if (typeof window !== 'undefined' && !isInitialized) {
+      setIsInitialized(true);
+      await loadSlim(engine);
+    }
+  }, [isInitialized]);
 
   // Only render on client to prevent hydration mismatch
   if (!isClient) {
@@ -64,12 +85,7 @@ const ParticlesContainer = () => {
         fullScreen: {
           enable: false,
         },
-        background: {
-          color: {
-            value: "#ffffff",
-          },
-        },
-        fpsLimit: isMobile ? 30 : 60,
+        fpsLimit: isMobile ? 30 : 40, // Reduce FPS to improve performance
         particles: {
           color: {
             value: "#d13239",
@@ -78,11 +94,11 @@ const ParticlesContainer = () => {
             color: "#d13239",
             distance: 150,
             enable: true,
-            opacity: 0.3,
-            width: isMobile ? 1 : 1.5,
+            opacity: 0.25, // Reduce opacity for better performance
+            width: isMobile ? 0.5 : 1, // Thinner lines for better performance
           },
           collisions: {
-            enable: !isMobile,
+            enable: false, // Disable collisions for better performance
           },
           move: {
             direction: "none",
@@ -91,27 +107,32 @@ const ParticlesContainer = () => {
               default: "bounce",
             },
             random: false,
-            speed: isMobile ? 1 : 1.5,
+            speed: isMobile ? 0.8 : 1, // Slower particles on mobile
             straight: false,
           },
           number: {
             density: {
-              enable: true,
-              area: 800,
+              enable: true, 
+              area: 1000, // Larger area = fewer particles
             },
-            value: isMobile ? 50 : 100,
+            value: isMobile ? 30 : 50, // Significantly reduce particle count
           },
           opacity: {
-            value: 0.7,
+            value: 0.5, // Reduced opacity
           },
           shape: {
-            type: "circle",
+            type: "circle", // Simpler shape for better performance
           },
           size: {
-            value: { min: 1, max: isMobile ? 4 : 6 },
+            value: { min: 1, max: isMobile ? 2 : 3 }, // Smaller particles
           },
         },
-        detectRetina: true,
+        detectRetina: false, // Disable retina detection for performance
+        background: {
+          color: {
+            value: "#ffffff",
+          },
+        },
       }}
       className="absolute inset-0 z-0"
     />

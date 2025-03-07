@@ -1,7 +1,10 @@
 'use client';
 
-import React, { useState, useRef, useEffect, Suspense } from 'react';
+import React, { useState, useRef, useEffect, lazy, Suspense } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+
+// Import only the specific animations needed instead of the entire framer-motion package
+import { useAnimate } from 'framer-motion';
 
 interface Message {
   content: string;
@@ -78,7 +81,7 @@ const qaDatabase = [
 ];
 
 // Special terminal commands
-const terminalCommands = {
+const terminalCommands: Record<string, string> = {
   help: 'Available commands:\n- help: Display this help message\n- clear: Clear the terminal\n- services: List all our services\n- contact: Display contact information\n- blog: Read our latest blog articles\n- packages: View our service packages',
   clear: 'CLEAR_TERMINAL',
   services: 'SINGRANK offers the following services:\n- Search Engine Optimization (SEO)\n- Content Strategy & Creation\n- Technical SEO & Site Audits\n- Local SEO & Google Business Optimization\n- Social Media Marketing\n- Web Analytics & Reporting\n- Conversion Rate Optimization\n- Pay-Per-Click Advertising\n- Website Design & Development\n- Online Reputation Management\n- Mobile Optimization',
@@ -97,119 +100,142 @@ const defaultResponses = [
   "I don't have data on that topic yet. You can type 'services' to see a full list of our service offerings."
 ];
 
+// Helper functions moved outside component to prevent recreation on each render
 const getRandomDefaultResponse = () => {
-  const randomIndex = Math.floor(Math.random() * defaultResponses.length);
-  return defaultResponses[randomIndex];
+  return defaultResponses[Math.floor(Math.random() * defaultResponses.length)];
 };
 
 const findAnswer = (question: string) => {
-  const normalizedQuestion = question.toLowerCase().trim();
+  const lowerCaseQuestion = question.toLowerCase();
   
-  // Check if it's a command
-  if (terminalCommands[normalizedQuestion as keyof typeof terminalCommands]) {
-    return terminalCommands[normalizedQuestion as keyof typeof terminalCommands];
+  // First check if it's a terminal command
+  if (lowerCaseQuestion.startsWith('/')) {
+    const command = lowerCaseQuestion.substring(1);
+    if (terminalCommands[command]) {
+      return terminalCommands[command];
+    }
   }
   
-  // Check if the question contains any of the keywords in our database
+  // Check terminal commands without slash prefix
+  if (terminalCommands[lowerCaseQuestion]) {
+    return terminalCommands[lowerCaseQuestion];
+  }
+  
+  // Check against QA database
   for (const qa of qaDatabase) {
-    if (qa.keywords.some(keyword => normalizedQuestion.includes(keyword))) {
+    if (qa.keywords.some(keyword => lowerCaseQuestion.includes(keyword))) {
       return qa.answer;
     }
   }
   
-  // If no matching keywords, return a default response
   return getRandomDefaultResponse();
 };
 
-// Error boundary for client components
-const ErrorFallback = () => {
+// Simple error fallback
+const ErrorFallback = () => (
+  <div className="fixed bottom-6 right-6 bg-red-50 shadow-lg rounded-lg p-4 z-50 text-red-600">
+    Error loading chat. Please refresh the page.
+  </div>
+);
+
+// Memoize the message item component to prevent unnecessary re-renders
+const MessageItem = React.memo(({ message }: { message: Message }) => {
+  const formatTimestamp = (date: Date) => {
+    return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+  };
+
+  const isBot = message.sender === 'bot';
   return (
-    <div className="hidden">
-      {/* Hidden error state that doesn't break the UI */}
+    <div className={`mb-3 ${isBot ? 'text-left' : 'text-right'}`}>
+      <div 
+        className={`inline-block px-4 py-2 rounded-lg max-w-[85%] ${
+          isBot 
+            ? 'bg-gray-100 text-gray-900' 
+            : 'bg-[#d13239] text-white'
+        }`}
+      >
+        <p className="text-sm whitespace-pre-line">{message.content}</p>
+      </div>
+      <div className="text-xs text-gray-500 mt-1">
+        {formatTimestamp(message.timestamp)}
+      </div>
     </div>
   );
-};
+});
 
+MessageItem.displayName = 'MessageItem';
+
+// Main component with reduced re-renders
 export default function ChatTerminal() {
+  // State management
   const [isOpen, setIsOpen] = useState(false);
-  const [inputValue, setInputValue] = useState('');
-  const [isTyping, setIsTyping] = useState(false);
-  const [hasNewNotification, setHasNewNotification] = useState(false);
   const [messages, setMessages] = useState<Message[]>([]);
-  
-  // Initialize messages on client-side only
-  useEffect(() => {
-    setMessages([
-      {
-        content: "SINGRANK Terminal v1.0 initialized...\nWelcome! Ask me anything about our services or type 'help' for available commands.",
-        sender: 'bot',
-        timestamp: new Date()
-      }
-    ]);
-  }, []);
-  
-  // Set notification after 30 seconds
-  useEffect(() => {
-    if (!isOpen) {
-      const timeout = setTimeout(() => {
-        setHasNewNotification(true);
-      }, 30000); // 30 seconds
-      
-      return () => clearTimeout(timeout);
-    }
-  }, [isOpen]);
-  
-  // Clear notification when opened
-  useEffect(() => {
-    if (isOpen) {
-      setHasNewNotification(false);
-    }
-  }, [isOpen]);
-  
+  const [input, setInput] = useState('');
+  const [isTyping, setIsTyping] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
+  const [hasInteracted, setHasInteracted] = useState(false);
   
-  // Scroll to bottom of messages
-  useEffect(() => {
-    if (messagesEndRef.current) {
-      messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
+  // Only initialize the component when it's actually opened to save resources
+  const handleOpenChat = () => {
+    setIsOpen(true);
+    setHasInteracted(true);
+    
+    // Send welcome message if this is the first time opening
+    if (messages.length === 0) {
+      setTimeout(() => {
+        setIsTyping(true);
+        setTimeout(() => {
+          setMessages([
+            {
+              content: "Hello! I'm SINGRANK's virtual assistant. How can I help you today? Type 'help' to see what I can do.",
+              sender: 'bot',
+              timestamp: new Date()
+            }
+          ]);
+          setIsTyping(false);
+        }, 1000);
+      }, 500);
     }
-  }, [messages, isTyping]);
+    
+    // Focus the input field
+    setTimeout(() => {
+      inputRef.current?.focus();
+    }, 100);
+  };
   
+  // Handle form submission
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!inputValue.trim()) return;
+    if (input.trim() === '') return;
     
     // Add user message
     const userMessage: Message = {
-      content: inputValue,
+      content: input,
       sender: 'user',
       timestamp: new Date()
     };
     
     setMessages(prev => [...prev, userMessage]);
-    setInputValue('');
+    setInput('');
+    
+    // Handle clear command
+    if (input.toLowerCase() === 'clear' || input.toLowerCase() === '/clear') {
+      setTimeout(() => {
+        setMessages([]);
+      }, 300);
+      return;
+    }
     
     // Show typing indicator
     setIsTyping(true);
     
-    // Simulate bot thinking
+    // Process the message with a slight delay to simulate thinking
     setTimeout(() => {
-      // Hide typing indicator
-      setIsTyping(false);
+      const botResponse = findAnswer(input);
       
-      const botResponse = findAnswer(inputValue);
-      
-      // Special command to clear terminal
-      if (botResponse === 'CLEAR_TERMINAL') {
-        setMessages([{
-          content: "Terminal cleared. Type 'help' for available commands.",
-          sender: 'bot',
-          timestamp: new Date()
-        }]);
-        return;
-      }
-      
+      // Add bot message
       const botMessage: Message = {
         content: botResponse,
         sender: 'bot',
@@ -217,153 +243,126 @@ export default function ChatTerminal() {
       };
       
       setMessages(prev => [...prev, botMessage]);
-    }, 1000 + Math.random() * 1500); // Random delay between 1000-2500ms
+      setIsTyping(false);
+    }, 1000);
   };
   
-  const formatTimestamp = (date: Date) => {
-    return `${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}:${date.getSeconds().toString().padStart(2, '0')}`;
-  };
+  // Scroll to bottom when messages change
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, [messages]);
   
+  // Only render the full component when the user has interacted with it
+  if (!hasInteracted) {
+    return (
+      <button
+        onClick={handleOpenChat}
+        className="fixed bottom-6 right-6 z-50 bg-[#d13239] text-white p-4 rounded-full shadow-lg hover:bg-[#b02a31] transition-all duration-300"
+        aria-label="Open chat"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
+        </svg>
+      </button>
+    );
+  }
+
   return (
-    <>
-      {/* Chat button */}
-      <div className="fixed bottom-4 right-4 z-50 flex items-center">
-        {!isOpen && (
-          <motion.div
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: 20 }}
-            className="bg-black/60 text-white text-sm rounded-full px-3 py-1 mr-2 shadow-lg backdrop-blur-sm"
-          >
-            Ask about our services
-          </motion.div>
-        )}
-        <motion.button
-          onClick={() => setIsOpen(!isOpen)}
-          className="bg-gradient-to-r from-[#d13239] to-[#ff4555] text-white p-3 rounded-full shadow-lg flex items-center justify-center relative z-10"
-          whileHover={{ scale: 1.1 }}
-          whileTap={{ scale: 0.9 }}
-          aria-label="Chat terminal"
+    <AnimatePresence>
+      {isOpen ? (
+        <motion.div
+          initial={{ opacity: 0, y: 50, scale: 0.9 }}
+          animate={{ opacity: 1, y: 0, scale: 1 }}
+          exit={{ opacity: 0, y: 50, scale: 0.9 }}
+          transition={{ duration: 0.2 }}
+          className="fixed bottom-6 right-6 z-50 w-80 sm:w-96 h-[460px] bg-white rounded-lg shadow-xl overflow-hidden border border-gray-200"
         >
-          {/* Notification indicator */}
-          {hasNewNotification && !isOpen && (
-            <motion.div 
-              className="absolute -top-1 -right-1 w-4 h-4 bg-[#27c93f] rounded-full border-2 border-black z-20"
-              animate={{ scale: [1, 1.3, 1] }}
-              transition={{ duration: 1, repeat: Infinity }}
-            />
-          )}
+          {/* Terminal header */}
+          <div className="bg-[#d13239] text-white px-4 py-3 flex justify-between items-center">
+            <h3 className="font-semibold text-sm">SINGRANK Terminal</h3>
+            <div className="flex space-x-2">
+              <button
+                onClick={() => setIsOpen(false)}
+                className="text-white hover:text-gray-200"
+                aria-label="Minimize"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M18 12H6" />
+                </svg>
+              </button>
+              <button
+                onClick={() => {
+                  setIsOpen(false);
+                  setHasInteracted(false);
+                }}
+                className="text-white hover:text-gray-200"
+                aria-label="Close"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+          </div>
           
-          {isOpen ? (
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <line x1="18" y1="6" x2="6" y2="18"></line>
-              <line x1="6" y1="6" x2="18" y2="18"></line>
-            </svg>
-          ) : (
-            <>
-              <motion.div
-                className="absolute w-full h-full rounded-full bg-white/20"
-                animate={{ 
-                  scale: [1, 1.2, 1],
-                }}
-                transition={{ 
-                  duration: 2,
-                  repeat: Infinity,
-                  repeatType: "loop"
-                }}
+          {/* Messages container */}
+          <div className="h-[370px] overflow-y-auto p-4 bg-white">
+            {messages.map((message, index) => (
+              <MessageItem key={index} message={message} />
+            ))}
+            
+            {/* Typing indicator */}
+            {isTyping && (
+              <div className="text-left mb-3">
+                <div className="inline-block px-4 py-2 rounded-lg bg-gray-100 text-gray-900">
+                  <div className="flex space-x-1">
+                    <div className="w-2 h-2 rounded-full bg-gray-500 animate-bounce" style={{ animationDelay: '0ms' }}></div>
+                    <div className="w-2 h-2 rounded-full bg-gray-500 animate-bounce" style={{ animationDelay: '200ms' }}></div>
+                    <div className="w-2 h-2 rounded-full bg-gray-500 animate-bounce" style={{ animationDelay: '400ms' }}></div>
+                  </div>
+                </div>
+              </div>
+            )}
+            
+            <div ref={messagesEndRef} />
+          </div>
+          
+          {/* Input form */}
+          <form onSubmit={handleSubmit} className="border-t border-gray-200 p-2 bg-gray-50">
+            <div className="flex space-x-2">
+              <input
+                ref={inputRef}
+                type="text"
+                value={input}
+                onChange={(e) => setInput(e.target.value)}
+                placeholder="Type a message..."
+                className="flex-1 px-3 py-2 text-sm rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#d13239] focus:border-transparent"
               />
-              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
-              </svg>
-            </>
-          )}
+              <button
+                type="submit"
+                className="bg-[#d13239] text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-[#b02a31] transition-colors"
+                disabled={isTyping}
+              >
+                Send
+              </button>
+            </div>
+          </form>
+        </motion.div>
+      ) : (
+        <motion.button
+          initial={{ scale: 0.9, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          exit={{ scale: 0.9, opacity: 0 }}
+          transition={{ duration: 0.2 }}
+          onClick={handleOpenChat}
+          className="fixed bottom-6 right-6 z-50 bg-[#d13239] text-white p-4 rounded-full shadow-lg hover:bg-[#b02a31] transition-all duration-300"
+          aria-label="Open chat"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
+          </svg>
         </motion.button>
-      </div>
-      
-      {/* Terminal Chat Window */}
-      <AnimatePresence>
-        {isOpen && (
-          <motion.div
-            initial={{ opacity: 0, y: 50, scale: 0.9 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: 20, scale: 0.9 }}
-            transition={{ type: 'spring', damping: 20 }}
-            className="fixed bottom-16 right-4 z-50 w-80 sm:w-96 h-[450px] bg-[#0f0f0f] rounded-md overflow-hidden shadow-2xl border border-[#333] flex flex-col"
-          >
-            {/* Terminal header */}
-            <div className="bg-[#222] px-4 py-2 flex items-center justify-between border-b border-[#333]">
-              <div className="flex space-x-2">
-                <span className="w-3 h-3 bg-[#ff5f56] rounded-full"></span>
-                <span className="w-3 h-3 bg-[#ffbd2e] rounded-full"></span>
-                <span className="w-3 h-3 bg-[#27c93f] rounded-full"></span>
-              </div>
-              <div className="text-white/80 text-xs font-mono">SINGRANK-Terminal</div>
-              <div className="text-white/50 text-xs font-mono">v1.0</div>
-            </div>
-            
-            {/* Welcome Message Alert */}
-            <motion.div 
-              initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: 'auto' }}
-              exit={{ opacity: 0, height: 0 }}
-              className="bg-[#27c93f]/10 border-l-4 border-[#27c93f] px-4 py-2 text-[#27c93f] text-xs"
-            >
-              💡 Tip: Try typing "help" to see available commands
-            </motion.div>
-            
-            {/* Chat messages */}
-            <div className="flex-1 overflow-y-auto p-4 font-mono text-sm" style={{ backgroundColor: '#0f0f0f' }}>
-              {messages.map((message, index) => (
-                <div key={index} className={`mb-3 ${message.sender === 'user' ? 'text-green-500' : 'text-white'}`}>
-                  <span className="text-[#666] mr-2">[{formatTimestamp(message.timestamp)}]</span>
-                  <span className={message.sender === 'user' ? 'text-[#d13239]' : 'text-[#27c93f]'}>
-                    {message.sender === 'user' ? '>' : '$'}
-                  </span>{' '}
-                  {message.content.split('\n').map((line, i) => (
-                    <div key={i}>{line}</div>
-                  ))}
-                </div>
-              ))}
-              
-              {/* Typing indicator */}
-              {isTyping && (
-                <div className="mb-3 text-white">
-                  <span className="text-[#666] mr-2">[{formatTimestamp(new Date())}]</span>
-                  <span className="text-[#27c93f]">$</span>{' '}
-                  <motion.span 
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: [0.2, 1, 0.2] }}
-                    transition={{ duration: 1.5, repeat: Infinity }}
-                    className="inline-block"
-                  >
-                    <span className="mr-1">•</span>
-                    <span className="mr-1">•</span>
-                    <span>•</span>
-                  </motion.span>
-                </div>
-              )}
-              
-              <div ref={messagesEndRef} />
-            </div>
-            
-            {/* Input field */}
-            <form onSubmit={handleSubmit} className="border-t border-[#333] p-2 bg-[#1a1a1a]">
-              <div className="flex items-center">
-                <span className="text-[#d13239] mx-2 font-mono">{'>'}</span>
-                <input
-                  type="text"
-                  value={inputValue}
-                  onChange={(e) => setInputValue(e.target.value)}
-                  className="flex-1 bg-transparent text-white border-none outline-none font-mono text-sm"
-                  placeholder="Type your question..."
-                  autoFocus
-                  disabled={isTyping}
-                />
-              </div>
-            </form>
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </>
+      )}
+    </AnimatePresence>
   );
 } 

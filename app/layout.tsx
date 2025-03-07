@@ -12,7 +12,7 @@ import StructuredData from './components/StructuredData'
 // This prevents hydration errors by ensuring they only load on the client
 const ChatTerminal = dynamic(() => import('./components/ChatTerminal'), { 
   ssr: false, 
-  loading: () => <div className="hidden lg:block fixed bottom-6 right-6 z-50 opacity-0"></div> 
+  loading: () => null
 })
 
 // Optimize font loading with subset and variable options for better performance
@@ -167,7 +167,10 @@ export default function RootLayout({
         </div>
         
         {/* Add Netlify Identity Widget - with deferred loading */}
-        <Script src="https://identity.netlify.com/v1/netlify-identity-widget.js" strategy="lazyOnload" />
+        <Script 
+          src="https://identity.netlify.com/v1/netlify-identity-widget.js" 
+          strategy="lazyOnload" 
+        />
         
         {/* Netlify Identity redirect script - simplified and optimized */}
         <Script id="netlify-identity-redirect" strategy="lazyOnload">
@@ -184,16 +187,19 @@ export default function RootLayout({
           `}
         </Script>
         
-        {/* Register service worker */}
+        {/* Register service worker - moved to afterInteractive to avoid blocking render */}
         <Script id="register-sw" strategy="afterInteractive">
           {`
             if ('serviceWorker' in navigator) {
               window.addEventListener('load', function() {
-                navigator.serviceWorker.register('/sw.js').then(function(registration) {
-                  console.log('ServiceWorker registration successful with scope: ', registration.scope);
-                }, function(err) {
-                  console.log('ServiceWorker registration failed: ', err);
-                });
+                // Use setTimeout to defer non-critical registration
+                setTimeout(function() {
+                  navigator.serviceWorker.register('/sw.js').then(function(registration) {
+                    console.log('ServiceWorker registration successful with scope: ', registration.scope);
+                  }, function(err) {
+                    console.log('ServiceWorker registration failed: ', err);
+                  });
+                }, 1000); // Delay by 1 second to prioritize content rendering
               });
             }
           `}
