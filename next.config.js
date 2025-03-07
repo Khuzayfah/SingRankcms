@@ -29,8 +29,30 @@ const nextConfig = {
     '@/components': {
       transform: '@/components/{{member}}',
     },
+    'react-icons/fa': {
+      transform: 'react-icons/fa/{{member}}',
+    },
+    'react-icons/bs': {
+      transform: 'react-icons/bs/{{member}}',
+    },
+    'react-icons/md': {
+      transform: 'react-icons/md/{{member}}',
+    },
+    'react-icons/io': {
+      transform: 'react-icons/io/{{member}}',
+    },
+    'react-icons/ri': {
+      transform: 'react-icons/ri/{{member}}',
+    },
+    'react-icons/si': {
+      transform: 'react-icons/si/{{member}}',
+    },
     'react-icons': {
       transform: 'react-icons/{{member}}',
+    },
+    'framer-motion': {
+      transform: 'framer-motion/{{member}}',
+      skipDefaultConversion: true,
     },
   },
   // Enable gzip compression for better performance
@@ -45,10 +67,22 @@ const nextConfig = {
     optimizeCss: true,  // Enabled now that 'critters' package is installed
     // Enable scroll restoration
     scrollRestoration: true,
-    // Code splitting optimizations
-    optimizePackageImports: ['react-icons', 'framer-motion', 'react-dom'],
+    // Enhanced code splitting optimizations
+    optimizePackageImports: [
+      'react-icons', 
+      'framer-motion', 
+      'react-dom', 
+      'recharts',
+      'tsparticles',
+      'react-tsparticles'
+    ],
     // Improve middleware performance
     instrumentationHook: true,
+    // Improved chunking strategy
+    // Enable automatic page bundling and smarter code splitting
+    largePageDataBytes: 128 * 1000, // 128kb
+    // Reduce CSS render blocking with nextScriptWorkers
+    nextScriptWorkers: true,
   },
   
   // Improved configuration for admin routes
@@ -135,18 +169,88 @@ const nextConfig = {
     
     // Optimize production builds
     if (!dev && !isServer) {
-      // Enable tree shaking
+      // Enable advanced tree shaking
       config.optimization.usedExports = true;
       
       // Minimize bundle size
       config.optimization.minimize = true;
       
-      // Improve chunk splitting
+      // Improved chunk splitting strategies
       config.optimization.splitChunks = {
         chunks: 'all',
-        maxInitialRequests: 25,
-        minSize: 20000,
+        maxInitialRequests: 30,
+        maxAsyncRequests: 30,
+        minSize: 20000, // 20kb min chunk size
+        minChunks: 1,
+        enforceSizeThreshold: 50000, // 50kb threshold for enforcing splitting
+        cacheGroups: {
+          framework: {
+            name: 'framework',
+            test: /[\\/]node_modules[\\/](react|react-dom|next|framer-motion)[\\/]/,
+            priority: 40,
+            chunks: 'all',
+            enforce: true,
+          },
+          commons: {
+            name: 'commons',
+            minChunks: 2,
+            priority: 20,
+          },
+          lib: {
+            test: /[\\/]node_modules[\\/]/,
+            priority: 10,
+            minChunks: 2,
+            chunks: 'async',
+            name(module) {
+              const packageName = module.context.match(/[\\/]node_modules[\\/](.*?)([\\/]|$)/)[1];
+              return `lib.${packageName.replace('@', '')}`;
+            },
+          },
+          default: {
+            minChunks: 1,
+            priority: -20,
+            reuseExistingChunk: true,
+          },
+          // Dedicated chunk for charts & data visualization
+          charts: {
+            test: /[\\/]node_modules[\\/](recharts|d3|victory)[\\/]/,
+            name: 'charts',
+            priority: 30,
+            chunks: 'async',
+          },
+          // Dedicated chunk for UI components
+          ui: {
+            test: /[\\/]components[\\/]ui[\\/]/,
+            name: 'ui-components',
+            priority: 15,
+            chunks: 'async',
+          },
+        }
       };
+      
+      // Add TerserPlugin configuration for better minification
+      config.optimization.minimizer = config.optimization.minimizer.map(minimizer => {
+        if (minimizer.constructor.name === 'TerserPlugin') {
+          return Object.assign(minimizer, {
+            options: {
+              ...minimizer.options,
+              terserOptions: {
+                ...minimizer.options.terserOptions,
+                compress: {
+                  ...minimizer.options.terserOptions.compress,
+                  drop_console: true,
+                  drop_debugger: true,
+                  pure_funcs: ['console.log', 'console.info', 'console.debug', 'console.warn'],
+                },
+                mangle: true,
+                keep_classnames: false,
+                keep_fnames: false,
+              },
+            },
+          });
+        }
+        return minimizer;
+      });
       
       // Add bundle analyzer when ANALYZE is true
       if (process.env.ANALYZE === 'true') {
