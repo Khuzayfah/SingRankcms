@@ -224,22 +224,29 @@ async function parseMarkdownFile(filePath: string): Promise<{
 // Get all blog posts
 export async function getAllBlogPosts(): Promise<BlogPost[]> {
   try {
-    console.log(`getAllBlogPosts called, NODE_ENV: ${process.env.NODE_ENV}`);
+    console.log(`getAllBlogPosts called, NODE_ENV: ${process.env.NODE_ENV}, NETLIFY: ${process.env.NETLIFY}`);
     
-    // Define potential blog post directories to check
+    // Define potential blog post directories to check in order of priority
     const potentialDirectories = [
-      // First priority: Check environment variable
+      // First check environment variable if set
       process.env.BLOG_POSTS_DIRECTORY,
-      // Second priority: Check standard locations based on environment
+      // Check standard locations
       process.env.NODE_ENV === 'production' 
         ? path.join(process.cwd(), 'public', '_posts')
         : path.join(process.cwd(), '_posts'),
-      // Fallbacks for Netlify
+      // Check alternative locations that might work in Netlify
       path.join(process.cwd(), '_posts'),
       path.join(process.cwd(), 'posts'),
       path.join(process.cwd(), 'public', 'posts'),
       path.join(process.cwd(), 'public', 'blog'),
-      path.join(process.cwd(), 'blog')
+      path.join(process.cwd(), 'blog'),
+      // For Netlify CMS specifically
+      path.join(process.cwd(), 'content', 'blog'),
+      // Check for absolute paths which might be needed in Netlify environment
+      '/opt/build/repo/_posts',
+      '/opt/build/repo/public/_posts',
+      '/opt/build/repo/posts',
+      '/opt/build/repo/content/blog'
     ].filter(Boolean) as string[]; // Filter out undefined values
     
     let postsDirectory = '';
@@ -251,7 +258,8 @@ export async function getAllBlogPosts(): Promise<BlogPost[]> {
         console.log(`Checking directory: ${directory}`);
         if (fs.existsSync(directory)) {
           const files = fs.readdirSync(directory).filter(fileName => {
-            return path.extname(fileName).toLowerCase() === '.md';
+            const ext = path.extname(fileName).toLowerCase();
+            return ext === '.md' || ext === '.markdown';
           });
           
           if (files.length > 0) {
@@ -270,11 +278,89 @@ export async function getAllBlogPosts(): Promise<BlogPost[]> {
       }
     }
     
-    // If no valid directory was found, return empty array or dummy data
+    // If no valid directory was found, try creating a default post
     if (!postsDirectory || fileNames.length === 0) {
       console.error('No valid blog posts directory found with markdown files');
-      return [];
+      
+      // Create a default post directory if in production
+      if (process.env.NODE_ENV === 'production') {
+        try {
+          // Determine a directory to create posts in
+          const defaultDir = path.join(process.cwd(), 'public', '_posts');
+          console.log(`Attempting to create default posts directory: ${defaultDir}`);
+          
+          // Create the directory if it doesn't exist
+          ensureDirectoryExists(defaultDir);
+          
+          // Create a default post if no posts found
+          const defaultPostPath = path.join(defaultDir, 'welcome-post.md');
+          if (!fs.existsSync(defaultPostPath)) {
+            const defaultPostContent = `---
+title: "Welcome to Our Blog"
+description: "This is a default post to ensure the blog page works correctly."
+date: "${new Date().toISOString().split('T')[0]}"
+thumbnail: "/images/blog/default.jpg"
+featured: true
+tags: ["Welcome"]
+author:
+  name: "SingRank Team"
+  title: "Content Team"
+  image: "/images/authors/default.jpg"
+---
+
+# Welcome to Our Blog
+
+Thank you for visiting our blog! We're working on adding more content soon.
+
+## Coming Soon
+
+Stay tuned for more articles about:
+- Digital Marketing Strategies
+- SEO Tips and Tricks
+- Content Marketing
+- And much more!
+
+In the meantime, feel free to [contact us](/contact) if you have any questions.
+`;
+            fs.writeFileSync(defaultPostPath, defaultPostContent);
+            console.log(`Created default post at: ${defaultPostPath}`);
+            
+            // Update the posts directory and file names
+            postsDirectory = defaultDir;
+            fileNames = ['welcome-post.md'];
+          }
+        } catch (error) {
+          console.error('Error creating default post:', error);
+        }
+      }
+      
+      // If still no posts found, return an empty array or placeholder post
+      if (!postsDirectory || fileNames.length === 0) {
+        console.log('Using placeholder post data since no physical files were found');
+        
+        // Return a single placeholder post
+        return [{
+          id: 'welcome-post',
+          slug: 'welcome-post',
+          title: 'Welcome to Our Blog',
+          description: 'We\'re working on adding content. Please check back soon!',
+          date: new Date().toISOString(),
+          category: 'Announcements',
+          image: '/images/blog/default.jpg',
+          content: '<p>Thank you for visiting our blog! We\'re currently working on adding content. Please check back soon for updates.</p>',
+          readTime: '1 min read',
+          featured: true,
+          tags: ['Welcome'],
+          author: {
+            name: 'SingRank Team',
+            title: 'Content Team',
+            image: '/images/authors/default.jpg'
+          }
+        }];
+      }
     }
+    
+    console.log(`Using blog posts from directory: ${postsDirectory}`);
     
     // Parse each markdown file
     const allPostsData = await Promise.all(
@@ -284,7 +370,7 @@ export async function getAllBlogPosts(): Promise<BlogPost[]> {
           const filePath = path.join(postsDirectory, fileName);
           
           // Get the slug from the filename
-          const slug = fileName.replace(/\.md$/, '');
+          const slug = fileName.replace(/\.md$/, '').replace(/\.markdown$/, '');
           
           // Parse the markdown file
           const postData = await parseMarkdownFile(filePath);
@@ -299,9 +385,9 @@ export async function getAllBlogPosts(): Promise<BlogPost[]> {
           console.error(`Error processing file ${fileName}:`, error);
           // Return a placeholder for this post
           return {
-            id: fileName.replace(/\.md$/, ''),
-            slug: fileName.replace(/\.md$/, ''),
-            title: fileName.replace(/\.md$/, ''),
+            id: fileName.replace(/\.md$/, '').replace(/\.markdown$/, ''),
+            slug: fileName.replace(/\.md$/, '').replace(/\.markdown$/, ''),
+            title: fileName.replace(/\.md$/, '').replace(/\.markdown$/, ''),
             description: 'Error loading this post',
             date: new Date().toISOString(),
             category: 'Uncategorized',
@@ -320,6 +406,9 @@ export async function getAllBlogPosts(): Promise<BlogPost[]> {
       })
     );
     
+    // Log the number of posts found
+    console.log(`Processed ${allPostsData.length} blog posts`);
+    
     // Sort the posts by date (most recent first)
     return allPostsData.sort((a, b) => {
       if (a.date < b.date) {
@@ -330,45 +419,78 @@ export async function getAllBlogPosts(): Promise<BlogPost[]> {
     });
   } catch (error) {
     console.error("Error in getAllBlogPosts:", error);
-    return [];
+    
+    // Return a placeholder post in case of error
+    return [{
+      id: 'system-error',
+      slug: 'system-error',
+      title: 'System is updating',
+      description: 'We\'re currently updating our blog. Please check back soon!',
+      date: new Date().toISOString(),
+      category: 'System',
+      image: '/images/blog/default.jpg',
+      content: '<p>Our blog system is currently updating. Please check back in a few minutes.</p>',
+      readTime: '1 min read',
+      featured: true,
+      tags: ['System'],
+      author: {
+        name: 'SingRank Team',
+        title: 'System',
+        image: '/images/authors/default.jpg'
+      }
+    }];
   }
 }
 
 // Get post by slug - with forced cache refresh
 export async function getBlogPostBySlug(slug: string): Promise<BlogPost | null> {
   try {
-    console.log(`Getting blog post by slug: ${slug}, NODE_ENV: ${process.env.NODE_ENV}`);
+    console.log(`Getting blog post by slug: ${slug}, NODE_ENV: ${process.env.NODE_ENV}, NETLIFY: ${process.env.NETLIFY}`);
     
-    // Define potential blog post directories to check
+    // Define potential blog post directories to check in order of priority
     const potentialDirectories = [
-      // First priority: Check environment variable
+      // First check environment variable if set
       process.env.BLOG_POSTS_DIRECTORY,
-      // Second priority: Check standard locations based on environment
+      // Check standard locations
       process.env.NODE_ENV === 'production' 
         ? path.join(process.cwd(), 'public', '_posts')
         : path.join(process.cwd(), '_posts'),
-      // Fallbacks for Netlify
+      // Check alternative locations that might work in Netlify
       path.join(process.cwd(), '_posts'),
       path.join(process.cwd(), 'posts'),
       path.join(process.cwd(), 'public', 'posts'),
       path.join(process.cwd(), 'public', 'blog'),
-      path.join(process.cwd(), 'blog')
+      path.join(process.cwd(), 'blog'),
+      // For Netlify CMS specifically
+      path.join(process.cwd(), 'content', 'blog'),
+      // Check for absolute paths which might be needed in Netlify environment
+      '/opt/build/repo/_posts',
+      '/opt/build/repo/public/_posts',
+      '/opt/build/repo/posts',
+      '/opt/build/repo/content/blog'
     ].filter(Boolean) as string[]; // Filter out undefined values
     
     let postFilePath = '';
     
-    // Try to find the post in each directory
+    // Try different file extensions
+    const fileExtensions = ['.md', '.markdown'];
+    
+    // Try to find the post in each directory with different extensions
     for (const directory of potentialDirectories) {
       try {
         if (fs.existsSync(directory)) {
-          const filePath = path.join(directory, `${slug}.md`);
-          console.log(`Checking for blog post at: ${filePath}`);
-          
-          if (fs.existsSync(filePath)) {
-            postFilePath = filePath;
-            console.log(`Found blog post at: ${filePath}`);
-            break;
+          for (const extension of fileExtensions) {
+            const filePath = path.join(directory, `${slug}${extension}`);
+            console.log(`Checking for blog post at: ${filePath}`);
+            
+            if (fs.existsSync(filePath)) {
+              postFilePath = filePath;
+              console.log(`Found blog post at: ${filePath}`);
+              break;
+            }
           }
+          
+          if (postFilePath) break;
         }
       } catch (dirError) {
         console.error(`Error accessing directory ${directory}:`, dirError);
@@ -378,6 +500,17 @@ export async function getBlogPostBySlug(slug: string): Promise<BlogPost | null> 
     // If post file wasn't found in any directory
     if (!postFilePath) {
       console.error(`Blog post with slug "${slug}" not found in any directory`);
+      
+      // Try to get all posts and find by slug for fallback
+      console.log('Attempting to fetch all posts to find matching slug...');
+      const allPosts = await getAllBlogPosts();
+      const matchingPost = allPosts.find(post => post.slug === slug);
+      
+      if (matchingPost) {
+        console.log(`Found matching post by slug in getAllBlogPosts results`);
+        return matchingPost;
+      }
+      
       return null;
     }
     

@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "build:netlify": "node scripts/prepare-blog-for-netlify.js && node scripts/ensure-blog-dirs.js && next build",
+    "build:netlify": "node scripts/prepare-blog-for-netlify.js && node scripts/ensure-blog-dirs.js && node scripts/debug-blog-paths.js && next build",
     "build:analyze": "cross-env ANALYZE=true next build",
     "build:skipcheck": "next build --no-lint",
     "start": "next start",
@@ -22,6 +22,7 @@
     "postbuild": "next-sitemap",
     "type-check": "tsc --noEmit",
     "setup-blog": "node scripts/setup-blog.js",
+    "debug:blog": "node scripts/debug-blog-paths.js",
     "deploy": "npm run build:netlify && netlify deploy --prod",
     "fix-blog-paths": "node scripts/fix-blog-paths.js",
     "ensure-blog-dirs": "node scripts/ensure-blog-dirs.js",

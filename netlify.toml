@@ -5,6 +5,9 @@
 [build.environment]
   NEXT_PUBLIC_SITE_URL = "https://your-site-name.netlify.app"
   NODE_VERSION = "18.17.0"
+  NETLIFY = "true"
+  NODE_ENV = "production"
+  BLOG_POSTS_DIRECTORY = "/opt/build/repo/public/_posts"
 
 # Enable the Next.js Runtime for better performance
 [build.processing]
@@ -41,6 +44,11 @@
   force = false
   conditions = {error = true}
 
+[[redirects]]
+  from = "/admin"
+  to = "/admin/index.html"
+  status = 200
+
 # Cache optimization
 [[headers]]
   for = "/_next/static/*"
@@ -75,4 +83,11 @@
 # Ensure blog files are included in the build
 [functions]
   included_files = ["_posts/**", "public/**"]
-  node_bundler = "esbuild" 
+  node_bundler = "esbuild"
+
+# Netlify CMS configuration
+[[headers]]
+  for = "/admin/*"
+  [headers.values]
+    X-Frame-Options = "DENY"
+    X-XSS-Protection = "1; mode=block" 
