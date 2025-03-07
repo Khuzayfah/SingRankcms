@@ -25,7 +25,7 @@
   to = "/index.html"
   status = 200
   force = false
-  conditions = {Client {error = true}}
+  conditions = {error = true}
 
 # Cache optimization
 [[headers]]
