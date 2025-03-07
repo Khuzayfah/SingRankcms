@@ -9,6 +9,20 @@
 # Enable the Next.js Runtime for better performance
 [build.processing]
   skip_processing = false
+  
+  # CSS processing settings
+  [build.processing.css]
+    bundle = true
+    minify = true
+  
+  # JavaScript processing settings
+  [build.processing.js]
+    bundle = true
+    minify = true
+  
+  # Image processing settings
+  [build.processing.images]
+    compress = true
 
 # Handle Next.js routing properly
 [[plugins]]
@@ -61,16 +75,4 @@
 # Ensure blog files are included in the build
 [functions]
   included_files = ["_posts/**", "public/**"]
-  node_bundler = "esbuild"
-
-# Special directory handling
-[build.processing]
-  skip_processing = false
-[build.processing.css]
-  bundle = true
-  minify = true
-[build.processing.js]
-  bundle = true
-  minify = true
-[build.processing.images]
-  compress = true 
+  node_bundler = "esbuild" 
