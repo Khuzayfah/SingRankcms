@@ -1,0 +1,76 @@
+[build]
+  command = "npm run build:netlify"
+  publish = ".next"
+
+[build.environment]
+  NEXT_PUBLIC_SITE_URL = "https://your-site-name.netlify.app"
+  NODE_VERSION = "18.17.0"
+
+# Enable the Next.js Runtime for better performance
+[build.processing]
+  skip_processing = false
+
+# Handle Next.js routing properly
+[[plugins]]
+  package = "@netlify/plugin-nextjs"
+
+# Redirects and rewrites 
+[[redirects]]
+  from = "/_next/static/*"
+  to = "/static/:splat"
+  status = 200
+
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+  force = false
+  conditions = {Client {error = true}}
+
+# Cache optimization
+[[headers]]
+  for = "/_next/static/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "/static/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "/*.js"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "/*.css"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "/*.png"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "/*.jpg"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+# Ensure blog files are included in the build
+[functions]
+  included_files = ["_posts/**", "public/**"]
+  node_bundler = "esbuild"
+
+# Special directory handling
+[build.processing]
+  skip_processing = false
+[build.processing.css]
+  bundle = true
+  minify = true
+[build.processing.js]
+  bundle = true
+  minify = true
+[build.processing.images]
+  compress = true 

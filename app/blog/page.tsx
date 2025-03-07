@@ -23,6 +23,25 @@ import type { BlogPost } from '../../lib/blogUtils';
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
 
+// Optimize images loading
+const shimmer = (w: number, h: number) => `
+  <svg width="${w}" height="${h}" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <defs>
+      <linearGradient id="g">
+        <stop stop-color="#f6f7f8" offset="20%" />
+        <stop stop-color="#edeef1" offset="50%" />
+        <stop stop-color="#f6f7f8" offset="70%" />
+      </linearGradient>
+    </defs>
+    <rect width="${w}" height="${h}" fill="#f6f7f8" />
+    <rect id="r" width="${w}" height="${h}" fill="url(#g)" />
+    <animate xlink:href="#r" attributeName="x" from="-${w}" to="${w}" dur="1s" repeatCount="indefinite"  />
+  </svg>`;
+
+const toBase64 = (str: string) => typeof window === 'undefined' 
+  ? Buffer.from(str).toString('base64') 
+  : window.btoa(str);
+
 // Generate metadata for SEO
 export async function generateMetadata() {
   return {
@@ -102,31 +121,27 @@ export default async function Blog() {
           </div>
           
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            {featuredPosts.map((post) => (
+            {featuredPosts.map((post, index) => (
               <div
                 key={post.id}
                 className="rounded-xl overflow-hidden shadow-lg group bg-white border border-gray-100 hover:shadow-xl transition-all duration-300"
               >
                 <Link href={`/blog/${post.id}`} className="block">
-                  <div className="relative aspect-square overflow-hidden">
+                  <div className="relative aspect-video overflow-hidden rounded-xl">
+                    <Image
+                      src={post.image || '/images/blog/default.jpg'}
+                      alt={post.title}
+                      fill
+                      priority={index === 0}
+                      placeholder="blur"
+                      blurDataURL={`data:image/svg+xml;base64,${toBase64(shimmer(700, 475))}`}
+                      className="object-cover transition-transform group-hover:scale-105 duration-500"
+                      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 700px"
+                    />
                     <div className="absolute inset-0 bg-[#d13239]/80 flex items-center justify-center z-10 opacity-0 group-hover:opacity-90 transition-opacity duration-300">
                       <span className="text-white font-medium flex items-center">
                         Read Article <FiArrowRight className="ml-2" />
                       </span>
-                    </div>
-                    <div className="h-full w-full relative">
-                      <div className="absolute top-4 left-4 z-10">
-                        <span className="inline-block px-3 py-1 bg-white/90 backdrop-blur-sm text-[#d13239] rounded-full text-xs font-medium">
-                          {post.category}
-                        </span>
-                      </div>
-                      <Image 
-                        src={post.image || '/images/blog/default.jpg'}
-                        alt={post.title}
-                        fill
-                        className="object-cover object-center"
-                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                      />
                     </div>
                   </div>
                   <div className="p-6">
@@ -173,12 +188,15 @@ export default async function Blog() {
           {blogPosts.map(post => (
             <div key={post.id} className="bg-white rounded-xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 group">
               <Link href={`/blog/${post.id}`} className="block">
-                <div className="relative aspect-square overflow-hidden">
-                  <Image 
+                <div className="relative aspect-video w-full rounded-lg overflow-hidden bg-gray-100">
+                  <Image
                     src={post.image || '/images/blog/default.jpg'}
                     alt={post.title}
                     fill
-                    className="object-cover object-center group-hover:scale-105 transition-transform duration-300"
+                    loading="lazy"
+                    placeholder="blur"
+                    blurDataURL={`data:image/svg+xml;base64,${toBase64(shimmer(400, 300))}`}
+                    className="object-cover object-center group-hover:scale-105 transition-transform duration-500"
                     sizes="(max-width: 768px) 100vw, (max-width: 1200px) 33vw, 400px"
                   />
                   <div className="absolute top-4 left-4 z-10">

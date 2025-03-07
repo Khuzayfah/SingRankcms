@@ -15,27 +15,14 @@ const ChatTerminal = dynamic(() => import('./components/ChatTerminal'), {
   loading: () => <div className="hidden lg:block fixed bottom-6 right-6 z-50 opacity-0"></div> 
 })
 
-// Optimize font loading with display: swap
-const fontOption1 = Montserrat({
-  subsets: ['latin'],
-  display: 'swap',
-  variable: '--font-montserrat',
-  preload: true,
-})
-
+// Optimize font loading with subset and variable options for better performance
 const fontOption2 = Poppins({
   subsets: ['latin'],
   weight: ['400', '500', '600', '700'],
   display: 'swap',
   variable: '--font-poppins',
   preload: true,
-})
-
-const fontOption3 = Raleway({
-  subsets: ['latin'],
-  display: 'swap',
-  variable: '--font-raleway',
-  preload: true,
+  adjustFontFallback: false, // Prevents CLS by not adjusting the fallback font
 })
 
 // Pick one of the above fonts to use as your primary font
@@ -136,8 +123,11 @@ export default function RootLayout({
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         
+        {/* DNS prefetch for third-party resources */}
+        <link rel="dns-prefetch" href="https://identity.netlify.com" />
+        
         {/* Preload critical assets */}
-        <link rel="preload" href="/images/logo.png" as="image" />
+        <link rel="preload" href="/images/logo.png" as="image" type="image/png" />
         
         {/* Add meta tag to prevent flash of unstyled content */}
         <style dangerouslySetInnerHTML={{ __html: `
@@ -161,10 +151,10 @@ export default function RootLayout({
           <ChatTerminal />
         </div>
         
-        {/* Add Netlify Identity Widget - moved to bottom of body for better compatibility */}
+        {/* Add Netlify Identity Widget - with deferred loading */}
         <Script src="https://identity.netlify.com/v1/netlify-identity-widget.js" strategy="lazyOnload" />
         
-        {/* Netlify Identity redirect script - simplified */}
+        {/* Netlify Identity redirect script - simplified and optimized */}
         <Script id="netlify-identity-redirect" strategy="lazyOnload">
           {`
             if (window.netlifyIdentity) {

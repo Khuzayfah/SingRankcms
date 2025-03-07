@@ -14,7 +14,7 @@ const nextConfig = {
     deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048, 3840],
     imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
     minimumCacheTTL: 31536000, // 1 year for better caching
-    unoptimized: true
+    unoptimized: process.env.NODE_ENV === 'production' && process.env.NETLIFY === 'true'
   },
   compiler: {
     removeConsole: process.env.NODE_ENV === 'production',
@@ -147,8 +147,20 @@ const nextConfig = {
         maxInitialRequests: 25,
         minSize: 20000,
       };
+      
+      // Add bundle analyzer when ANALYZE is true
+      if (process.env.ANALYZE === 'true') {
+        const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
+        config.plugins.push(
+          new BundleAnalyzerPlugin({
+            analyzerMode: 'server',
+            analyzerPort: 8888,
+            openAnalyzer: true,
+          })
+        );
+      }
     }
-    
+
     return config;
   },
 }
