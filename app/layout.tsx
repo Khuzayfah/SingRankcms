@@ -31,7 +31,7 @@ const primaryFont = fontOption2 // Using Poppins in this example
 export const viewport: Viewport = {
   width: 'device-width',
   initialScale: 1,
-  themeColor: '#000000', // Changed to black for luxury theme
+  themeColor: '#d13239', // Using the brand red color for theme
   // Add faster touch response
   maximumScale: 5,
 }
@@ -109,6 +109,13 @@ export const metadata: Metadata = {
   other: {
     'baidu-site-verification': 'baidu-verification-code',
   },
+  // Add manifest link for PWA
+  manifest: '/manifest.json',
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: 'default',
+    title: 'SingRank',
+  },
 }
 
 export default function RootLayout({
@@ -125,6 +132,14 @@ export default function RootLayout({
         
         {/* DNS prefetch for third-party resources */}
         <link rel="dns-prefetch" href="https://identity.netlify.com" />
+        
+        {/* PWA meta tags and links */}
+        <link rel="manifest" href="/manifest.json" />
+        <meta name="theme-color" content="#d13239" />
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+        <meta name="apple-mobile-web-app-title" content="SingRank" />
+        <link rel="apple-touch-icon" href="/icons/icon-192x192.png" />
         
         {/* Preload critical assets */}
         <link rel="preload" href="/images/logo.png" as="image" type="image/png" />
@@ -168,6 +183,9 @@ export default function RootLayout({
             }
           `}
         </Script>
+        
+        {/* Register service worker */}
+        <Script src="/sw-register.js" strategy="afterInteractive" />
       </body>
     </html>
   )
