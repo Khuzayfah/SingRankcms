@@ -242,15 +242,21 @@ export default async function BlogPost({ params }: { params: { id: string } }) {
                   prose-img:rounded-lg prose-img:shadow-md
                   prose-blockquote:border-l-4 prose-blockquote:border-[#d13239] prose-blockquote:bg-gray-50 prose-blockquote:py-2 prose-blockquote:px-4 prose-blockquote:rounded-r-lg
                   prose-ul:my-6 prose-ol:my-6
-                  prose-li:my-2">
+                  prose-li:my-2
+                  prose-li:ml-4 prose-li:list-disc
+                  prose-ol:list-decimal prose-ol:pl-4
+                  prose-ul:list-disc prose-ul:pl-4">
                   
                   {/* Article description as intro paragraph */}
-                  <p className="text-xl font-medium text-gray-700 mb-8 !mt-0">
+                  <p className="text-xl font-medium text-gray-700 mb-8 !mt-0 first-letter:text-4xl first-letter:font-bold first-letter:text-[#d13239] first-letter:mr-1 first-letter:float-left first-letter:mt-1">
                     {post.description}
                   </p>
                   
                   {/* Render the article content */}
-                  <div dangerouslySetInnerHTML={{ __html: post.content }} />
+                  <div 
+                    dangerouslySetInnerHTML={{ __html: post.content }}
+                    className="article-content leading-relaxed [&>p]:my-6 [&>p]:text-lg [&>p]:text-gray-800 [&>p]:leading-relaxed [&>p>a]:text-[#d13239] [&>p>a]:font-medium [&>p>a]:underline [&>p>a]:underline-offset-2 [&>h2]:text-2xl [&>h2]:font-bold [&>h2]:text-gray-900 [&>h2]:mt-10 [&>h2]:mb-4 [&>h2]:pb-1 [&>h2]:border-b [&>h2]:border-gray-100 [&>h3]:text-xl [&>h3]:font-bold [&>h3]:text-gray-900 [&>h3]:mt-8 [&>h3]:mb-4 [&>ul]:list-disc [&>ul]:pl-6 [&>ul]:my-6 [&>ol]:list-decimal [&>ol]:pl-6 [&>ol]:my-6 [&>li]:mb-2 [&>li]:text-gray-800 [&>blockquote]:border-l-4 [&>blockquote]:border-[#d13239] [&>blockquote]:bg-gray-50 [&>blockquote]:py-3 [&>blockquote]:px-5 [&>blockquote]:my-6 [&>blockquote]:italic [&>blockquote]:text-gray-700 [&>blockquote]:rounded-r-md"
+                  />
                 </div>
                 
                 {/* Tags */}

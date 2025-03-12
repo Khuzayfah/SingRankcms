@@ -87,7 +87,20 @@ async function parseMarkdownFile(filePath: string): Promise<{
     // Clone the processed content to use for heading extraction
     const contentString = processedContent.toString();
     
-    while ((match = headingRegex.exec(contentString)) !== null) {
+    // Pre-process the markdown to convert any ## formatting that wasn't properly processed
+    let enhancedContent = content.replace(/^(#{1,6})\s+(.+)$/gm, (match, hashes, title) => {
+      const level = hashes.length;
+      return `<h${level}>${title}</h${level}>`;
+    });
+    
+    // Process the enhanced content again
+    const enhancedProcessed = await remark()
+      .use(html)
+      .process(enhancedContent || 'No content provided.');
+    
+    let finalContentString = enhancedProcessed.toString();
+    
+    while ((match = headingRegex.exec(finalContentString)) !== null) {
       const level = parseInt(match[1]);
       const text = match[2];
       // Create an id from the heading text for anchor links
@@ -118,7 +131,7 @@ async function parseMarkdownFile(filePath: string): Promise<{
     }
 
     // Add custom styling to HTML elements with better readability and professional look
-    const styledContent = processedContent.toString()
+    const styledContent = finalContentString
       // Headings with IDs for anchor links and consistent styling
       .replace(/<h([1-6])>(.*?)<\/h\1>/g, (_, level, content) => {
         const id = content.toLowerCase().replace(/[^\w\s]/g, '').replace(/\s+/g, '-');
@@ -174,7 +187,16 @@ async function parseMarkdownFile(filePath: string): Promise<{
       
       // Horizontal rules
       .replace(/<hr>/g,
-        '<hr class="my-8 border-t border-gray-200" />');
+        '<hr class="my-8 border-t border-gray-200" />')
+      
+      // Fix for markdown formatting that might not be properly processed
+      .replace(/#{1,6}\s+([^\n]+)/g, (match, title) => {
+        const level = match.trim().indexOf(' ');
+        if (level > 0 && level <= 6) {
+          return `<h${level} class="text-${level === 1 ? '4xl' : level === 2 ? '3xl' : level === 3 ? '2xl' : 'xl'} font-bold text-gray-900 ${level === 1 ? 'mb-8 mt-10' : 'mb-4 mt-8'}">${title}</h${level}>`;
+        }
+        return match;
+      });
     
     // Calculate read time (assuming average reading speed of 200 words per minute)
     const wordCount = content.split(/\s+/).length;
