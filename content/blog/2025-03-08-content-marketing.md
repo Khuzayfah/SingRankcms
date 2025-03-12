@@ -1,15 +1,19 @@
 ---
-title: "5 Strategi Content Marketing yang Efektif"
-description: "Temukan strategi content marketing terbukti yang dapat membantu bisnis Anda menarik lebih banyak pelanggan dan meningkatkan konversi."
-date: "2025-03-11"
-category: "Content Marketing"
-image: "/images/blog/content-marketing.jpg"
-featured: false
-tags: ["Content Marketing", "Digital Strategy", "Engagement"]
 author:
-  name: "SingRank Team"
-  title: "Content Strategist"
-  image: "/images/authors/admin.jpg"
+  name: SingRank Team
+  title: Content Strategist
+  image: /images/authors/admin.jpg
+featured: false
+title: 1 Strategi Content Marketing yang Efektif
+date: 2025-03-11
+tags:
+  - Content Marketing
+  - Digital Strategy
+  - Engagement
+image: /images/blog/content-marketing.jpg
+description: Temukan strategi content marketing terbukti yang dapat membantu
+  bisnis Anda menarik lebih banyak pelanggan dan meningkatkan konversi.
+category: Content Marketing
 ---
 
 # 5 Strategi Content Marketing yang Efektif
