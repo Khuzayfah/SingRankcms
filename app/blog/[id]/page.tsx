@@ -20,6 +20,7 @@ import { getBlogPostBySlug, getAllBlogPosts } from '../../../lib/blogUtils';
 import { notFound } from 'next/navigation';
 import StructuredData from '../../components/StructuredData';
 import type { BlogPost } from '../../../lib/blogUtils';
+import styles from './BlogPost.module.css';
 
 // Set to no-caching to ensure fresh content
 export const dynamic = 'force-dynamic';
@@ -223,10 +224,10 @@ export default async function BlogPost({ params }: { params: { id: string } }) {
             
             {/* Article Content */}
             <div className="px-4 md:px-8 lg:px-16 py-8">
-              <div className="max-w-3xl mx-auto article-container">
+              <div className={`max-w-3xl mx-auto ${styles["article-container"]}`}>
                 {/* Table of Contents - Auto-generated based on headings */}
                 {post.tableOfContents && (
-                  <div dangerouslySetInnerHTML={{ __html: post.tableOfContents }} className="toc-wrapper mb-10" />
+                  <div dangerouslySetInnerHTML={{ __html: post.tableOfContents }} className={styles["toc-wrapper"] + " mb-10"} />
                 )}
                 
                 {/* Article description as intro paragraph */}
@@ -237,7 +238,7 @@ export default async function BlogPost({ params }: { params: { id: string } }) {
                 {/* Render the article content */}
                 <div 
                   dangerouslySetInnerHTML={{ __html: post.content }}
-                  className="article-content"
+                  className={styles["article-content"]}
                 />
                 
                 {/* Tags */}
@@ -296,185 +297,6 @@ export default async function BlogPost({ params }: { params: { id: string } }) {
             )}
           </article>
         </main>
-        
-        <style jsx global>{`
-          .article-container {
-            font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
-            font-size: 1.125rem;
-            line-height: 1.8;
-            color: #333;
-          }
-          
-          .toc-wrapper {
-            border-radius: 0.5rem;
-            border: 1px solid #f0f0f0;
-            background-color: #fafafa;
-            padding: 1.5rem;
-            margin-bottom: 2.5rem;
-          }
-          
-          .toc-wrapper h3 {
-            color: #d13239;
-            font-weight: 700;
-            margin-bottom: 0.75rem;
-          }
-          
-          .toc-wrapper ul {
-            padding-left: 1.25rem;
-          }
-          
-          .toc-wrapper li {
-            margin-bottom: 0.5rem;
-          }
-          
-          .toc-wrapper a {
-            color: #d13239;
-            text-decoration: none;
-            transition: all 0.2s;
-          }
-          
-          .toc-wrapper a:hover {
-            text-decoration: underline;
-          }
-          
-          .article-content h2 {
-            font-size: 1.875rem;
-            font-weight: 700;
-            margin-top: 2.5rem;
-            margin-bottom: 1rem;
-            padding-bottom: 0.5rem;
-            border-bottom: 1px solid #f0f0f0;
-            color: #d13239;
-          }
-          
-          .article-content h3 {
-            font-size: 1.5rem;
-            font-weight: 700;
-            margin-top: 2rem;
-            margin-bottom: 1rem;
-            color: #d13239;
-          }
-          
-          .article-content h4 {
-            font-size: 1.25rem;
-            font-weight: 700;
-            margin-top: 1.5rem;
-            margin-bottom: 0.75rem;
-            color: #d13239;
-          }
-          
-          .article-content p {
-            margin-bottom: 1.5rem;
-            line-height: 1.8;
-          }
-          
-          .article-content a {
-            color: #d13239;
-            font-weight: 500;
-            text-decoration: underline;
-            text-decoration-thickness: 1px;
-            text-underline-offset: 2px;
-            transition: all 0.2s;
-          }
-          
-          .article-content a:hover {
-            text-decoration-thickness: 2px;
-          }
-          
-          .article-content strong, .article-content b {
-            font-weight: 700;
-            color: #d13239;
-          }
-          
-          .article-content ul, .article-content ol {
-            margin: 1.5rem 0;
-            padding-left: 1.5rem;
-          }
-          
-          .article-content ul {
-            list-style-type: disc;
-          }
-          
-          .article-content ol {
-            list-style-type: decimal;
-          }
-          
-          .article-content li {
-            margin-bottom: 0.75rem;
-            padding-left: 0.5rem;
-          }
-          
-          .article-content blockquote {
-            margin: 2rem 0;
-            padding: 1.5rem 2rem;
-            border-left: 4px solid #d13239;
-            background-color: #f9f9f9;
-            font-style: italic;
-            border-radius: 0 0.5rem 0.5rem 0;
-          }
-          
-          .article-content blockquote p {
-            margin-bottom: 0;
-          }
-          
-          .article-content img {
-            display: block;
-            max-width: 100%;
-            margin: 2rem auto;
-            border-radius: 0.5rem;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-          }
-          
-          .article-content code {
-            background-color: #f1f1f1;
-            color: #d13239;
-            padding: 0.2rem 0.4rem;
-            border-radius: 0.25rem;
-            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-            font-size: 0.875rem;
-          }
-          
-          .article-content pre {
-            background-color: #2d3748;
-            color: #e5e5e5;
-            padding: 1.5rem;
-            border-radius: 0.5rem;
-            overflow-x: auto;
-            margin: 1.5rem 0;
-          }
-          
-          .article-content pre code {
-            background-color: transparent;
-            color: inherit;
-            padding: 0;
-            font-size: 0.875rem;
-          }
-          
-          .article-content hr {
-            margin: 2.5rem 0;
-            border: 0;
-            height: 1px;
-            background-color: #f0f0f0;
-          }
-          
-          @media (max-width: 768px) {
-            .article-content h2 {
-              font-size: 1.5rem;
-            }
-            
-            .article-content h3 {
-              font-size: 1.25rem;
-            }
-            
-            .article-content h4 {
-              font-size: 1.125rem;
-            }
-            
-            .article-content {
-              font-size: 1rem;
-            }
-          }
-        `}</style>
       </>
     );
   } catch (error) {

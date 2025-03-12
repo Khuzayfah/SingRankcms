@@ -5,6 +5,9 @@ import { remark } from 'remark';
 import html from 'remark-html';
 import { cache } from 'react';
 
+// Cache invalidation timestamp to ensure content is fresh
+let lastCacheInvalidation = Date.now();
+
 // Define blog post interface
 export interface BlogPost {
   id: string;
@@ -251,15 +254,25 @@ async function parseMarkdownFile(filePath: string): Promise<{
   }
 }
 
-// Get all blog posts
-export async function getAllBlogPosts(): Promise<BlogPost[]> {
+// Utility to invalidate cache
+export function invalidateBlogCache() {
+  console.log('Invalidating blog content cache');
+  lastCacheInvalidation = Date.now();
+}
+
+// Get all blog posts - Updated with cache bypass
+export async function getAllBlogPosts(bypassCache: boolean = false): Promise<BlogPost[]> {
   try {
-    console.log(`getAllBlogPosts called, NODE_ENV: ${process.env.NODE_ENV}, NETLIFY: ${process.env.NETLIFY}`);
+    const cacheTimestamp = lastCacheInvalidation;
+    console.log(`getAllBlogPosts called with bypassCache=${bypassCache}, cache timestamp: ${new Date(cacheTimestamp).toISOString()}`);
+    console.log(`NODE_ENV: ${process.env.NODE_ENV}, NETLIFY: ${process.env.NETLIFY}`);
     
     // Define potential blog post directories to check in order of priority
     const potentialDirectories = [
       // First check environment variable if set
       process.env.BLOG_POSTS_DIRECTORY,
+      // Check for content directory which is used by Decap CMS
+      path.join(process.cwd(), 'content', 'blog'),
       // Check standard locations
       process.env.NODE_ENV === 'production' 
         ? path.join(process.cwd(), 'public', '_posts')
@@ -271,7 +284,6 @@ export async function getAllBlogPosts(): Promise<BlogPost[]> {
       path.join(process.cwd(), 'public', 'blog'),
       path.join(process.cwd(), 'blog'),
       // For Netlify CMS specifically
-      path.join(process.cwd(), 'content', 'blog'),
       // Check for absolute paths which might be needed in Netlify environment
       '/opt/build/repo/_posts',
       '/opt/build/repo/public/_posts',

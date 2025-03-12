@@ -1,6 +1,26 @@
 backend:
   name: git-gateway
   branch: main
+  repo: Khuzayfah/SingRankcms
+  commit_messages:
+    create: 'Create {{collection}} "{{slug}}"'
+    update: 'Update {{collection}} "{{slug}}"'
+    delete: 'Delete {{collection}} "{{slug}}"'
+    uploadMedia: 'Upload "{{path}}"'
+    deleteMedia: 'Delete "{{path}}"'
+
+# Configure webhooks to refresh content
+site_url: https://singrank.com
+display_url: https://singrank.com
+locale: id
+# Add webhook for content updates to invalidate cache
+webhook_url: https://singrank.com/api/blog/refresh
+webhook_events:
+  - publish
+  - unpublish
+  - create
+  - update
+  - delete
 
 # Publish mode for editorial workflow
 publish_mode: editorial_workflow
