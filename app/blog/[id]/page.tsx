@@ -159,14 +159,14 @@ export default async function BlogPost({ params }: { params: { id: string } }) {
             {/* Article Header */}
             <header className="relative">
               {/* Featured Image */}
-              <div className="relative h-[30vh] md:h-[40vh] lg:h-[50vh] w-full">
+              <div className="relative aspect-square w-full max-h-[600px]">
                 <Image
                   src={post.image || '/images/blog/default.jpg'}
                   alt={post.title}
                   fill
                   priority
                   placeholder="blur"
-                  blurDataURL={`data:image/svg+xml;base64,${toBase64(shimmer(1200, 630))}`}
+                  blurDataURL={`data:image/svg+xml;base64,${toBase64(shimmer(1200, 1200))}`}
                   className="object-cover object-center brightness-[0.85]"
                   sizes="(max-width: 1024px) 100vw, 1024px"
                 />
@@ -273,14 +273,14 @@ export default async function BlogPost({ params }: { params: { id: string } }) {
                         href={`/blog/${relatedPost.id}`}
                         className="bg-white rounded-lg shadow-sm overflow-hidden hover:shadow-md transition-shadow group"
                       >
-                        <div className="relative h-48 w-full">
+                        <div className="relative aspect-square w-full">
                           <Image
                             src={relatedPost.image || '/images/blog/default.jpg'}
                             alt={relatedPost.title}
                             fill
                             loading="lazy"
                             placeholder="blur"
-                            blurDataURL={`data:image/svg+xml;base64,${toBase64(shimmer(400, 225))}`}
+                            blurDataURL={`data:image/svg+xml;base64,${toBase64(shimmer(400, 400))}`}
                             className="object-cover group-hover:scale-105 transition-transform duration-300"
                             sizes="(max-width: 768px) 100vw, 33vw"
                           />

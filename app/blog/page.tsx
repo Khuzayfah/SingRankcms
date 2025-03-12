@@ -182,14 +182,14 @@ export default async function Blog() {
                   className="rounded-xl overflow-hidden shadow-lg group bg-white border border-gray-100 hover:shadow-xl transition-all duration-300"
                 >
                   <Link href={`/blog/${post.id}`} className="block">
-                    <div className="relative aspect-video overflow-hidden rounded-xl">
+                    <div className="relative aspect-square overflow-hidden rounded-xl">
                       <Image
                         src={post.image || '/images/blog/default.jpg'}
                         alt={post.title}
                         fill
                         priority={index === 0}
                         placeholder="blur"
-                        blurDataURL={`data:image/svg+xml;base64,${toBase64(shimmer(700, 475))}`}
+                        blurDataURL={`data:image/svg+xml;base64,${toBase64(shimmer(700, 700))}`}
                         className="object-cover transition-transform group-hover:scale-105 duration-500"
                         sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 700px"
                       />
@@ -243,16 +243,16 @@ export default async function Blog() {
             {blogPosts.map(post => (
               <div key={post.id} className="bg-white rounded-xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 group">
                 <Link href={`/blog/${post.id}`} className="block">
-                  <div className="relative aspect-video w-full rounded-lg overflow-hidden bg-gray-100">
+                  <div className="relative aspect-square w-full rounded-lg overflow-hidden bg-gray-100">
                     <Image
                       src={post.image || '/images/blog/default.jpg'}
                       alt={post.title}
                       fill
                       loading="lazy"
                       placeholder="blur"
-                      blurDataURL={`data:image/svg+xml;base64,${toBase64(shimmer(400, 300))}`}
+                      blurDataURL={`data:image/svg+xml;base64,${toBase64(shimmer(700, 700))}`}
                       className="object-cover object-center group-hover:scale-105 transition-transform duration-500"
-                      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 33vw, 400px"
+                      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 33vw, 700px"
                     />
                     <div className="absolute top-4 left-4 z-10">
                       <span className="inline-block px-3 py-1 bg-white/90 backdrop-blur-sm text-[#d13239] rounded-full text-xs font-medium">

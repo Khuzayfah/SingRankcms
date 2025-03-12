@@ -168,7 +168,7 @@ async function parseMarkdownFile(filePath: string): Promise<{
       
       // Style images with better layout and responsive design
       .replace(/<img(.*?)>/g, 
-        '<div class="my-10"><img$1 class="rounded-lg shadow-md w-full object-cover mx-auto" loading="lazy" /></div>')
+        '<div class="my-10"><img$1 class="rounded-lg shadow-md w-full object-cover aspect-ratio-1-1" style="aspect-ratio: 1/1; max-width: 600px; margin: 0 auto;" loading="lazy" /></div>')
       
       // Blockquotes with a professional design
       .replace(/<blockquote>(.*?)<\/blockquote>/g, 
