@@ -116,7 +116,7 @@ async function parseMarkdownFile(filePath: string): Promise<{
     let tableOfContents = '';
     if (headings.length > 0) {
       tableOfContents = '<div class="toc-container bg-gray-50 rounded-lg border border-gray-100 p-5 mb-8">';
-      tableOfContents += '<h3 class="text-lg font-bold mb-3 text-gray-900">Table of Contents</h3>';
+      tableOfContents += '<h3 class="text-lg font-bold mb-3 text-[#d13239]">Table of Contents</h3>';
       tableOfContents += '<nav class="toc text-[#d13239] mb-2">';
       tableOfContents += '<ul class="space-y-1 text-sm">';
       
@@ -146,7 +146,7 @@ async function parseMarkdownFile(filePath: string): Promise<{
         };
         const size = sizes[level] || 'text-lg';
         
-        return `<h${level} id="${id}" class="${size} font-bold text-gray-900 ${margin}">${content}</h${level}>`;
+        return `<h${level} id="${id}" class="${size} font-bold text-[#d13239] ${margin}">${content}</h${level}>`;
       })
       
       // Paragraphs with better line height and spacing
@@ -157,29 +157,29 @@ async function parseMarkdownFile(filePath: string): Promise<{
       .replace(/<em>(.*?)<\/em>/g, 
         '<em class="text-gray-800 italic">$1</em>')
       .replace(/<strong>(.*?)<\/strong>/g, 
-        '<strong class="font-bold text-gray-900">$1</strong>')
+        '<strong class="font-bold text-[#d13239]">$1</strong>')
       
       // Improve links
       .replace(/<a(.*?)>(.*?)<\/a>/g, 
-        '<a$1 class="text-[#d13239] font-medium hover:underline transition-colors">$2</a>')
+        '<a$1 class="text-[#d13239] font-medium hover:underline transition-colors underline underline-offset-2">$2</a>')
       
       // Style images with better layout and responsive design
       .replace(/<img(.*?)>/g, 
-        '<div class="my-8"><img$1 class="rounded-lg shadow-md w-full object-cover mx-auto" loading="lazy" /></div>')
+        '<div class="my-10"><img$1 class="rounded-lg shadow-md w-full object-cover mx-auto" loading="lazy" /></div>')
       
       // Blockquotes with a professional design
       .replace(/<blockquote>(.*?)<\/blockquote>/g, 
-        '<blockquote class="border-l-4 border-[#d13239] bg-gray-50 py-4 px-6 my-6 rounded-r-lg text-gray-800 italic">$1</blockquote>')
+        '<blockquote class="border-l-4 border-[#d13239] bg-gray-50 py-4 px-6 my-8 rounded-r-lg text-gray-800 italic">$1</blockquote>')
       
       // Lists with better spacing
       .replace(/<(ul|ol)>(.*?)<\/\1>/g, (_, type, content) => 
-        `<${type} class="list-${type === 'ul' ? 'disc' : 'decimal'} pl-6 my-6 space-y-2 text-gray-800">${content
+        `<${type} class="list-${type === 'ul' ? 'disc' : 'decimal'} pl-6 my-8 space-y-3 text-gray-800">${content
           .replace(/<li>(.*?)<\/li>/g, '<li class="text-gray-800 pl-2">$1</li>')
         }</${type}>`)
       
       // Code blocks with syntax highlighting styles
       .replace(/<pre><code>(.*?)<\/code><\/pre>/g, 
-        '<pre class="bg-gray-900 text-gray-100 p-4 rounded-lg overflow-x-auto my-6"><code class="text-sm">$1</code></pre>')
+        '<pre class="bg-gray-900 text-gray-100 p-6 rounded-lg overflow-x-auto my-8"><code class="text-sm">$1</code></pre>')
       
       // Inline code
       .replace(/<code>(.*?)<\/code>/g, 
@@ -187,13 +187,21 @@ async function parseMarkdownFile(filePath: string): Promise<{
       
       // Horizontal rules
       .replace(/<hr>/g,
-        '<hr class="my-8 border-t border-gray-200" />')
+        '<hr class="my-10 border-t border-gray-200" />')
       
       // Fix for markdown formatting that might not be properly processed
       .replace(/#{1,6}\s+([^\n]+)/g, (match, title) => {
         const level = match.trim().indexOf(' ');
         if (level > 0 && level <= 6) {
-          return `<h${level} class="text-${level === 1 ? '4xl' : level === 2 ? '3xl' : level === 3 ? '2xl' : 'xl'} font-bold text-gray-900 ${level === 1 ? 'mb-8 mt-10' : 'mb-4 mt-8'}">${title}</h${level}>`;
+          return `<h${level} class="text-${level === 1 ? '4xl' : level === 2 ? '3xl' : level === 3 ? '2xl' : 'xl'} font-bold text-[#d13239] ${level === 1 ? 'mb-8 mt-10' : 'mb-4 mt-8'}">${title}</h${level}>`;
+        }
+        return match;
+      })
+      
+      // Ensure all images are responsive
+      .replace(/<img([^>]*?)>/g, (match, attrs) => {
+        if (!attrs.includes('class=')) {
+          return `<img${attrs} class="w-full rounded-lg shadow-md">`;
         }
         return match;
       });

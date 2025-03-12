@@ -154,7 +154,7 @@ export default async function BlogPost({ params }: { params: { id: string } }) {
           </div>
           
           {/* Article Container */}
-          <article className="bg-white shadow-sm rounded-lg overflow-hidden mx-auto max-w-5xl">
+          <article className="bg-white shadow-sm rounded-lg overflow-hidden mx-auto max-w-4xl">
             {/* Article Header */}
             <header className="relative">
               {/* Featured Image */}
@@ -181,7 +181,7 @@ export default async function BlogPost({ params }: { params: { id: string } }) {
               
               {/* Title and Author Section - Overlapping the image */}
               <div className="relative bg-white rounded-t-3xl mx-4 -mt-12 p-6 md:p-8 shadow-lg z-10">
-                <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-6 text-gray-900 leading-tight">
+                <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-6 text-[#d13239] leading-tight">
                   {post.title}
                 </h1>
                 
@@ -222,53 +222,34 @@ export default async function BlogPost({ params }: { params: { id: string } }) {
             </header>
             
             {/* Article Content */}
-            <div className="px-4 md:px-8 lg:px-12 py-8">
-              <div className="max-w-3xl mx-auto">
+            <div className="px-4 md:px-8 lg:px-16 py-8">
+              <div className="max-w-3xl mx-auto article-container">
                 {/* Table of Contents - Auto-generated based on headings */}
                 {post.tableOfContents && (
-                  <div dangerouslySetInnerHTML={{ __html: post.tableOfContents }} />
+                  <div dangerouslySetInnerHTML={{ __html: post.tableOfContents }} className="toc-wrapper mb-10" />
                 )}
                 
-                {/* Main Article Content */}
-                <div className="prose prose-lg max-w-none text-gray-800
-                  prose-headings:font-bold prose-headings:text-gray-900 prose-headings:scroll-mt-20
-                  prose-h2:text-2xl prose-h2:mt-12 prose-h2:mb-4 prose-h2:pb-2 prose-h2:border-b prose-h2:border-gray-100
-                  prose-h3:text-xl prose-h3:mt-8 prose-h3:mb-4
-                  prose-p:text-base prose-p:leading-relaxed prose-p:my-6
-                  prose-a:text-[#d13239] prose-a:no-underline prose-a:font-medium hover:prose-a:underline
-                  prose-strong:font-bold prose-strong:text-gray-900
-                  prose-code:text-[#d13239] prose-code:bg-gray-50 prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded prose-code:text-sm
-                  prose-pre:bg-gray-900 prose-pre:text-gray-100 prose-pre:p-4 prose-pre:rounded-lg
-                  prose-img:rounded-lg prose-img:shadow-md
-                  prose-blockquote:border-l-4 prose-blockquote:border-[#d13239] prose-blockquote:bg-gray-50 prose-blockquote:py-2 prose-blockquote:px-4 prose-blockquote:rounded-r-lg
-                  prose-ul:my-6 prose-ol:my-6
-                  prose-li:my-2
-                  prose-li:ml-4 prose-li:list-disc
-                  prose-ol:list-decimal prose-ol:pl-4
-                  prose-ul:list-disc prose-ul:pl-4">
-                  
-                  {/* Article description as intro paragraph */}
-                  <p className="text-xl font-medium text-gray-700 mb-8 !mt-0 first-letter:text-4xl first-letter:font-bold first-letter:text-[#d13239] first-letter:mr-1 first-letter:float-left first-letter:mt-1">
-                    {post.description}
-                  </p>
-                  
-                  {/* Render the article content */}
-                  <div 
-                    dangerouslySetInnerHTML={{ __html: post.content }}
-                    className="article-content leading-relaxed [&>p]:my-6 [&>p]:text-lg [&>p]:text-gray-800 [&>p]:leading-relaxed [&>p>a]:text-[#d13239] [&>p>a]:font-medium [&>p>a]:underline [&>p>a]:underline-offset-2 [&>h2]:text-2xl [&>h2]:font-bold [&>h2]:text-gray-900 [&>h2]:mt-10 [&>h2]:mb-4 [&>h2]:pb-1 [&>h2]:border-b [&>h2]:border-gray-100 [&>h3]:text-xl [&>h3]:font-bold [&>h3]:text-gray-900 [&>h3]:mt-8 [&>h3]:mb-4 [&>ul]:list-disc [&>ul]:pl-6 [&>ul]:my-6 [&>ol]:list-decimal [&>ol]:pl-6 [&>ol]:my-6 [&>li]:mb-2 [&>li]:text-gray-800 [&>blockquote]:border-l-4 [&>blockquote]:border-[#d13239] [&>blockquote]:bg-gray-50 [&>blockquote]:py-3 [&>blockquote]:px-5 [&>blockquote]:my-6 [&>blockquote]:italic [&>blockquote]:text-gray-700 [&>blockquote]:rounded-r-md"
-                  />
-                </div>
+                {/* Article description as intro paragraph */}
+                <p className="text-xl font-medium text-gray-700 mb-8 !mt-0 first-letter:text-5xl first-letter:font-bold first-letter:text-[#d13239] first-letter:mr-2 first-letter:float-left first-letter:leading-[1]">
+                  {post.description}
+                </p>
+                
+                {/* Render the article content */}
+                <div 
+                  dangerouslySetInnerHTML={{ __html: post.content }}
+                  className="article-content"
+                />
                 
                 {/* Tags */}
                 {post.tags && post.tags.length > 0 && (
-                  <div className="mt-12 pt-6 border-t border-gray-100">
-                    <h3 className="text-lg font-bold mb-3 text-gray-900">Tags</h3>
+                  <div className="mt-16 pt-6 border-t border-gray-100">
+                    <h3 className="text-lg font-bold mb-3 text-[#d13239]">Topics</h3>
                     <div className="flex flex-wrap gap-2">
                       {post.tags.map((tag, index) => (
                         <Link 
                           key={index} 
                           href={`/blog?tag=${tag}`}
-                          className="px-3 py-1 bg-gray-50 hover:bg-gray-100 text-gray-700 rounded-full text-sm transition-colors"
+                          className="px-3 py-1.5 bg-gray-50 hover:bg-gray-100 text-gray-700 rounded-full text-sm transition-colors border border-gray-100"
                         >
                           {tag}
                         </Link>
@@ -283,13 +264,13 @@ export default async function BlogPost({ params }: { params: { id: string } }) {
             {hasRelatedPosts && (
               <div className="bg-gray-50 px-4 py-12 mt-8">
                 <div className="max-w-5xl mx-auto">
-                  <h2 className="text-2xl font-bold mb-8 text-gray-900">Related Articles</h2>
+                  <h2 className="text-2xl font-bold mb-8 text-[#d13239]">Related Articles</h2>
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                     {relatedPosts.map((relatedPost) => (
                       <Link 
                         key={relatedPost.id} 
                         href={`/blog/${relatedPost.id}`}
-                        className="bg-white rounded-lg shadow-sm overflow-hidden hover:shadow-md transition-shadow"
+                        className="bg-white rounded-lg shadow-sm overflow-hidden hover:shadow-md transition-shadow group"
                       >
                         <div className="relative h-48 w-full">
                           <Image
@@ -299,12 +280,12 @@ export default async function BlogPost({ params }: { params: { id: string } }) {
                             loading="lazy"
                             placeholder="blur"
                             blurDataURL={`data:image/svg+xml;base64,${toBase64(shimmer(400, 225))}`}
-                            className="object-cover"
+                            className="object-cover group-hover:scale-105 transition-transform duration-300"
                             sizes="(max-width: 768px) 100vw, 33vw"
                           />
                         </div>
                         <div className="p-4">
-                          <h3 className="font-bold text-lg mb-2 text-gray-900 line-clamp-2">{relatedPost.title}</h3>
+                          <h3 className="font-bold text-lg mb-2 text-gray-900 line-clamp-2 group-hover:text-[#d13239] transition-colors">{relatedPost.title}</h3>
                           <p className="text-gray-600 text-sm line-clamp-3">{relatedPost.description}</p>
                         </div>
                       </Link>
@@ -315,6 +296,185 @@ export default async function BlogPost({ params }: { params: { id: string } }) {
             )}
           </article>
         </main>
+        
+        <style jsx global>{`
+          .article-container {
+            font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+            font-size: 1.125rem;
+            line-height: 1.8;
+            color: #333;
+          }
+          
+          .toc-wrapper {
+            border-radius: 0.5rem;
+            border: 1px solid #f0f0f0;
+            background-color: #fafafa;
+            padding: 1.5rem;
+            margin-bottom: 2.5rem;
+          }
+          
+          .toc-wrapper h3 {
+            color: #d13239;
+            font-weight: 700;
+            margin-bottom: 0.75rem;
+          }
+          
+          .toc-wrapper ul {
+            padding-left: 1.25rem;
+          }
+          
+          .toc-wrapper li {
+            margin-bottom: 0.5rem;
+          }
+          
+          .toc-wrapper a {
+            color: #d13239;
+            text-decoration: none;
+            transition: all 0.2s;
+          }
+          
+          .toc-wrapper a:hover {
+            text-decoration: underline;
+          }
+          
+          .article-content h2 {
+            font-size: 1.875rem;
+            font-weight: 700;
+            margin-top: 2.5rem;
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid #f0f0f0;
+            color: #d13239;
+          }
+          
+          .article-content h3 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-top: 2rem;
+            margin-bottom: 1rem;
+            color: #d13239;
+          }
+          
+          .article-content h4 {
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-top: 1.5rem;
+            margin-bottom: 0.75rem;
+            color: #d13239;
+          }
+          
+          .article-content p {
+            margin-bottom: 1.5rem;
+            line-height: 1.8;
+          }
+          
+          .article-content a {
+            color: #d13239;
+            font-weight: 500;
+            text-decoration: underline;
+            text-decoration-thickness: 1px;
+            text-underline-offset: 2px;
+            transition: all 0.2s;
+          }
+          
+          .article-content a:hover {
+            text-decoration-thickness: 2px;
+          }
+          
+          .article-content strong, .article-content b {
+            font-weight: 700;
+            color: #d13239;
+          }
+          
+          .article-content ul, .article-content ol {
+            margin: 1.5rem 0;
+            padding-left: 1.5rem;
+          }
+          
+          .article-content ul {
+            list-style-type: disc;
+          }
+          
+          .article-content ol {
+            list-style-type: decimal;
+          }
+          
+          .article-content li {
+            margin-bottom: 0.75rem;
+            padding-left: 0.5rem;
+          }
+          
+          .article-content blockquote {
+            margin: 2rem 0;
+            padding: 1.5rem 2rem;
+            border-left: 4px solid #d13239;
+            background-color: #f9f9f9;
+            font-style: italic;
+            border-radius: 0 0.5rem 0.5rem 0;
+          }
+          
+          .article-content blockquote p {
+            margin-bottom: 0;
+          }
+          
+          .article-content img {
+            display: block;
+            max-width: 100%;
+            margin: 2rem auto;
+            border-radius: 0.5rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+          }
+          
+          .article-content code {
+            background-color: #f1f1f1;
+            color: #d13239;
+            padding: 0.2rem 0.4rem;
+            border-radius: 0.25rem;
+            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+            font-size: 0.875rem;
+          }
+          
+          .article-content pre {
+            background-color: #2d3748;
+            color: #e5e5e5;
+            padding: 1.5rem;
+            border-radius: 0.5rem;
+            overflow-x: auto;
+            margin: 1.5rem 0;
+          }
+          
+          .article-content pre code {
+            background-color: transparent;
+            color: inherit;
+            padding: 0;
+            font-size: 0.875rem;
+          }
+          
+          .article-content hr {
+            margin: 2.5rem 0;
+            border: 0;
+            height: 1px;
+            background-color: #f0f0f0;
+          }
+          
+          @media (max-width: 768px) {
+            .article-content h2 {
+              font-size: 1.5rem;
+            }
+            
+            .article-content h3 {
+              font-size: 1.25rem;
+            }
+            
+            .article-content h4 {
+              font-size: 1.125rem;
+            }
+            
+            .article-content {
+              font-size: 1rem;
+            }
+          }
+        `}</style>
       </>
     );
   } catch (error) {
