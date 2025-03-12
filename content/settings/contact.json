@@ -1,0 +1,22 @@
+{
+  "email": "info@singrank.com",
+  "phone": "+65 9123 4567",
+  "address": "123 Robinson Road, Singapore 068913",
+  "social": [
+    {
+      "platform": "Facebook",
+      "url": "https://facebook.com/singrank",
+      "icon": "fa-facebook"
+    },
+    {
+      "platform": "Instagram",
+      "url": "https://instagram.com/singrank",
+      "icon": "fa-instagram"
+    },
+    {
+      "platform": "LinkedIn",
+      "url": "https://linkedin.com/company/singrank",
+      "icon": "fa-linkedin"
+    }
+  ]
+}

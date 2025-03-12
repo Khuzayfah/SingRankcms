@@ -1,0 +1,24 @@
+{
+  "heroTitle": "Tingkatkan Peringkat Website Anda dengan SingRank",
+  "heroSubtitle": "Solusi digital marketing terbaik untuk meningkatkan visibilitas online dan menghasilkan lebih banyak leads bagi bisnis Anda",
+  "heroImage": "/images/hero.jpg",
+  "ctaText": "Konsultasi Gratis",
+  "ctaUrl": "/contact",
+  "features": [
+    {
+      "title": "Strategi SEO Terbukti",
+      "description": "Metode SEO kami telah terbukti meningkatkan peringkat di mesin pencari secara konsisten",
+      "icon": "fa-search"
+    },
+    {
+      "title": "Content Marketing",
+      "description": "Konten berkualitas tinggi yang menarik pengunjung dan meningkatkan konversi",
+      "icon": "fa-edit"
+    },
+    {
+      "title": "Analisis Kompetitor",
+      "description": "Memahami strategi pesaing Anda untuk mengembangkan keunggulan kompetitif",
+      "icon": "fa-chart-line"
+    }
+  ]
+}

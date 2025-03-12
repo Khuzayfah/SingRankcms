@@ -3,6 +3,7 @@
   publish = ".next"
 
 [build.environment]
+  NEXT_PUBLIC_NETLIFY_CMS_ENABLED = "true"
   NEXT_PUBLIC_SITE_URL = "https://your-site-name.netlify.app"
   NODE_VERSION = "18.17.0"
   NETLIFY = "true"
