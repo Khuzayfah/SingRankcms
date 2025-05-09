@@ -19,7 +19,7 @@ export default function StructuredData({ type, data }: StructuredDataProps) {
         '@type': 'Organization',
         name: 'SingRank',
         url: 'https://singrank.com',
-        logo: 'https://singrank.com/images/logo.png',
+        logo: 'https://singrank.com/img/wildcard.png',
         description: 'Premier SEO Agency in Singapore helping businesses achieve digital excellence',
         address: {
           '@type': 'PostalAddress',
@@ -39,7 +39,8 @@ export default function StructuredData({ type, data }: StructuredDataProps) {
           'https://www.facebook.com/singrank',
           'https://twitter.com/singrank',
           'https://www.linkedin.com/company/singrank'
-        ]
+        ],
+        image: 'https://singrank.com/img/wildcard.png'
       } as WithContext<Organization>;
       break;
       
@@ -78,7 +79,7 @@ export default function StructuredData({ type, data }: StructuredDataProps) {
           name: 'SingRank',
           logo: {
             '@type': 'ImageObject',
-            url: 'https://singrank.com/images/logo.png'
+            url: 'https://singrank.com/img/wildcard.png'
           }
         },
         mainEntityOfPage: {

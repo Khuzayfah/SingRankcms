@@ -4,5 +4,6 @@
   "logo": "/images/logo.png",
   "favicon": "/favicon.ico",
   "mainColor": "#7857FF",
-  "secondaryColor": "#1F69FF"
+  "secondaryColor": "#1F69FF",
+  "socialShareImage": "/img/wildcard.png"
 }

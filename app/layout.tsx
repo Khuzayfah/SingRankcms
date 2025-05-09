@@ -61,11 +61,11 @@ export const metadata: Metadata = {
     type: 'website',
     images: [
       {
-        url: 'https://singrank.com/images/singrank-og-image.jpg',
+        url: 'https://singrank.com/img/wildcard.png',
         width: 1200,
-        height: 630,
+        height: 1200,
         alt: 'SingRank - #1 SEO Agency Singapore',
-        type: 'image/jpeg',
+        type: 'image/png',
       },
     ],
   },
@@ -73,7 +73,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: 'SingRank | #1 SEO Agency Singapore | Top-Rated Digital Marketing',
     description: 'SingRank - Premier SEO Agency Singapore helping businesses rank #1 on Google. Expert in SEO, AEO, content strategy & technical optimization with proven ROI.',
-    images: ['https://singrank.com/images/singrank-twitter-image.jpg'],
+    images: ['https://singrank.com/img/wildcard.png'],
     creator: '@singrank',
     site: '@singrank',
   },
