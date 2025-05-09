@@ -9,6 +9,7 @@
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { motion, AnimatePresence } from 'framer-motion';
 import { usePathname } from 'next/navigation';
 import { 
@@ -112,6 +113,22 @@ export default function Navbar() {
               animate="animate"
               whileHover="hover"
             >
+              {/* Icon */}
+              <motion.div
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.4 }}
+                className="mr-2"
+              >
+                <Image 
+                  src="/icons/logo.png" 
+                  alt="SingRank Logo" 
+                  width={28} 
+                  height={28} 
+                  className="h-7 w-7"
+                />
+              </motion.div>
+              
               <div className="flex items-baseline">
                 <div className="flex">
                   {singText.map((letter, index) => (

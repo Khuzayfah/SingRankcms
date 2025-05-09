@@ -271,6 +271,23 @@ export default function Home() {
               />
             </div>
             
+            {/* SingRank Logo */}
+            <motion.div
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.8 }}
+              className="mb-6 w-96 h-96 relative"
+            >
+              <Image
+                src="/icons/logo.png"
+                alt="SingRank Logo"
+                width={384}
+                height={384}
+                className="object-contain"
+                priority
+              />
+            </motion.div>
+            
             <motion.div 
               initial={{ opacity: 0, scale: 0.8 }}
               animate={{ opacity: 1, scale: 1 }}
@@ -510,7 +527,7 @@ export default function Home() {
                 viewport={{ once: true }}
                 transition={{ duration: 0.5 }}
               >
-                ROI-Focused SEO Agency
+                ROI-FOCUSED SEO AGENCY
               </motion.span>
               <h2 className="text-4xl font-bold text-center text-luxury-red-700 relative">
                 <span className="inline-block relative">
@@ -538,85 +555,120 @@ export default function Home() {
                   </svg>
                 </motion.div>
               </h2>
-              <p className="text-gray-600 max-w-2xl mx-auto mt-4">
+              <p className="text-gray-600 max-w-3xl mx-auto mt-4">
                 Our data-driven approach has delivered exceptional SEO results for businesses across Singapore.
               </p>
             </div>
           </AnimatedSection>
           
+          <div className="mb-16 bg-white p-8 rounded-lg border border-luxury-red-100 shadow-xl">
+            <AnimatedSection>
+              <div className="flex flex-col md:flex-row items-center justify-between">
+                <div className="mb-8 md:mb-0 md:w-1/2 md:pr-8">
+                  <h3 className="text-2xl font-bold text-luxury-red-700 mb-4">
+                    Expertise-Driven Digital Marketing
+                  </h3>
+                  <p className="text-gray-700 mb-4">
+                    SingRank was founded by experts in <span className="font-semibold text-luxury-red-600">Marketing</span>, <span className="font-semibold text-luxury-red-600">Programming</span>, and <span className="font-semibold text-luxury-red-600">Data Science</span>, bringing together the perfect combination of skills to revolutionize your digital presence.
+                  </p>
+                  <p className="text-gray-700">
+                    We help businesses achieve remarkable growth through digital marketing strategies based on <span className="italic">actual data</span>, not perception or guesswork.
+                  </p>
+                </div>
+                <div className="w-full md:w-1/2">
+                  <Image 
+                    src="/icons/logo.png" 
+                    alt="SingRank Data-Driven Approach" 
+                    width={600} 
+                    height={400} 
+                    className="rounded-lg shadow-lg object-cover"
+                  />
+                </div>
+              </div>
+            </AnimatedSection>
+          </div>
+          
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {stats.map((stat, index) => (
-              <AnimatedSection key={index} delay={index * 0.1}>
-                <motion.div 
-                  className="relative bg-white p-8 rounded-lg border border-luxury-red-100 text-center hover:shadow-xl transition-all duration-500 overflow-hidden group"
-                  whileHover={{ 
-                    y: -6,
-                    boxShadow: "0 25px 50px -12px rgba(209, 50, 57, 0.15)",
-                    borderColor: "rgba(209, 50, 57, 0.3)",
-                  }}
-                >
-                  {/* Decorative elements */}
-                  <motion.div 
-                    className="absolute -top-16 -right-16 w-32 h-32 bg-luxury-red-50 rounded-full opacity-70 group-hover:bg-luxury-red-100"
-                    animate={{
-                      scale: [0.8, 1.2, 0.8],
-                    }}
-                    transition={{
-                      duration: 8,
-                      repeat: Infinity,
-                      repeatType: "reverse",
-                      ease: "easeInOut",
-                      delay: index * 1.5
-                    }}
-                  />
-                  <motion.div 
-                    className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-luxury-red-100 via-luxury-red-500 to-luxury-red-100 opacity-0 group-hover:opacity-100"
-                    transition={{ duration: 0.5 }}
-                  />
-                  
+            <AnimatedSection delay={0.1}>
+              <motion.div 
+                className="bg-white p-8 rounded-xl shadow-lg border border-red-100 hover:shadow-xl transition-all duration-300"
+                whileHover={{ y: -5, boxShadow: "0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)" }}
+              >
+                <div className="flex flex-col items-center">
                   <motion.h3 
-                    className="text-4xl sm:text-5xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-luxury-red-600 to-luxury-red-800 mb-4 relative z-10"
-                    initial={{ opacity: 0, scale: 0.5 }}
+                    className="text-6xl font-bold text-red-700 mb-3"
+                    initial={{ opacity: 0, scale: 0.8 }}
                     whileInView={{ opacity: 1, scale: 1 }}
                     viewport={{ once: true }}
-                    transition={{ duration: 0.5, delay: 0.2 + index * 0.1 }}
+                    transition={{ duration: 0.5 }}
                   >
-                    <motion.span
-                      initial={{ opacity: 0, y: 20 }}
-                      whileInView={{ opacity: 1, y: 0 }}
-                      viewport={{ once: true }}
-                      transition={{ duration: 0.3, delay: 0.4 + index * 0.1 }}
-                    >
-                      {stat.number}
-                    </motion.span>
+                    97%
                   </motion.h3>
-                  
-                  <div className="h-0.5 w-16 bg-gradient-to-r from-luxury-red-300 to-luxury-red-600 mx-auto mb-4" />
-                  
-                  <p className="text-lg text-gray-700 font-medium relative z-10 mb-2">{stat.label}</p>
-                  
-                  <motion.div
-                    className="w-12 h-12 mx-auto mt-4 opacity-10 group-hover:opacity-20 transition-opacity duration-500"
-                    whileHover={{ rotate: 180 }}
-                    transition={{ duration: 0.8 }}
+                  <div className="h-0.5 w-20 bg-red-200 mb-4"></div>
+                  <p className="text-gray-600 font-medium text-center">Ranking Improvement</p>
+                  <div className="mt-6 text-red-200">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" fill="currentColor" viewBox="0 0 16 16">
+                      <path d="m7.646 9.354-3.792 3.792a.5.5 0 0 0 .353.854h7.586a.5.5 0 0 0 .354-.854L8.354 9.354a.5.5 0 0 0-.708 0z"/>
+                      <path d="M11.414 11H14.5a.5.5 0 0 0 .5-.5v-7a.5.5 0 0 0-.5-.5h-13a.5.5 0 0 0-.5.5v7a.5.5 0 0 0 .5.5h3.086l-1 1H1.5A1.5 1.5 0 0 1 0 10.5v-7A1.5 1.5 0 0 1 1.5 2h13A1.5 1.5 0 0 1 16 3.5v7a1.5 1.5 0 0 1-1.5 1.5h-2.086l-1-1z"/>
+                    </svg>
+                  </div>
+                </div>
+              </motion.div>
+            </AnimatedSection>
+            
+            <AnimatedSection delay={0.2}>
+              <motion.div 
+                className="bg-white p-8 rounded-xl shadow-lg border border-red-100 hover:shadow-xl transition-all duration-300"
+                whileHover={{ y: -5, boxShadow: "0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)" }}
+              >
+                <div className="flex flex-col items-center">
+                  <motion.h3 
+                    className="text-6xl font-bold text-red-700 mb-3"
+                    initial={{ opacity: 0, scale: 0.8 }}
+                    whileInView={{ opacity: 1, scale: 1 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.5, delay: 0.1 }}
                   >
-                    {index === 0 ? (
-                      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-full h-full text-luxury-red-800">
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 18L9 11.25l4.306 4.307a11.95 11.95 0 015.814-5.519l2.74-1.22m0 0l-5.94-2.28m5.94 2.28l-2.28 5.941" />
-                      </svg>
-                    ) : index === 1 ? (
-                      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-full h-full text-luxury-red-800">
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 3v11.25A2.25 2.25 0 006 16.5h2.25M3.75 3h-1.5m1.5 0h16.5m0 0h1.5m-1.5 0v11.25A2.25 2.25 0 0118 16.5h-2.25m-7.5 0h7.5m-7.5 0l-1 3m8.5-3l1 3m0 0l.5 1.5m-.5-1.5h-9.5m0 0l-.5 1.5M9 11.25v1.5M12 9v3.75m3-6v6" />
-                      </svg>
-                    ) : (
-                      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-full h-full text-luxury-red-800">
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 013 19.875v-6.75zM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V8.625zM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V4.125z" />
-                      </svg>
-                    )}
-                  </motion.div>
-                </motion.div>
-              </AnimatedSection>
-            ))}
+                    184%
+                  </motion.h3>
+                  <div className="h-0.5 w-20 bg-red-200 mb-4"></div>
+                  <p className="text-gray-600 font-medium text-center">Average Traffic Growth</p>
+                  <div className="mt-6 text-red-200">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" fill="currentColor" viewBox="0 0 16 16">
+                      <path d="M8 9.5a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3"/>
+                      <path d="M8 1c-1.573 0-3.022.289-4.096.777C2.875 2.245 2 2.993 2 4s.875 1.755 1.904 2.223C4.978 6.711 6.427 7 8 7s3.022-.289 4.096-.777C13.125 5.755 14 5.007 14 4s-.875-1.755-1.904-2.223C11.022 1.289 9.573 1 8 1Z"/>
+                      <path d="M2 7v-.839c.457.432 1.004.751 1.49.972C4.722 7.693 6.318 8 8 8s3.278-.307 4.51-.867c.486-.22 1.033-.54 1.49-.972V7c0 .424-.155.802-.411 1.133a4.51 4.51 0 0 0-4.815 1.843A12.31 12.31 0 0 1 8 10c-1.573 0-3.022-.289-4.096-.777C2.875 8.755 2 8.007 2 7Zm6.257 3.998L8 11c-1.682 0-3.278-.307-4.51-.867-.486-.22-1.033-.54-1.49-.972V10c0 1.007.875 1.755 1.904 2.223C4.978 12.711 6.427 13 8 13h.027a4.552 4.552 0 0 1 .23-2.002Zm-.002 3L8 14c-1.682 0-3.278-.307-4.51-.867-.486-.22-1.033-.54-1.49-.972V13c0 1.007.875 1.755 1.904 2.223C4.978 15.711 6.427 16 8 16c.536 0 1.058-.034 1.555-.097a4.507 4.507 0 0 1-1.3-1.905Z"/>
+                    </svg>
+                  </div>
+                </div>
+              </motion.div>
+            </AnimatedSection>
+            
+            <AnimatedSection delay={0.3}>
+              <motion.div 
+                className="bg-white p-8 rounded-xl shadow-lg border border-red-100 hover:shadow-xl transition-all duration-300"
+                whileHover={{ y: -5, boxShadow: "0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)" }}
+              >
+                <div className="flex flex-col items-center">
+                  <motion.h3 
+                    className="text-6xl font-bold text-red-700 mb-3"
+                    initial={{ opacity: 0, scale: 0.8 }}
+                    whileInView={{ opacity: 1, scale: 1 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.5, delay: 0.2 }}
+                  >
+                    8.3x
+                  </motion.h3>
+                  <div className="h-0.5 w-20 bg-red-200 mb-4"></div>
+                  <p className="text-gray-600 font-medium text-center">Average ROI</p>
+                  <div className="mt-6 text-red-200">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" fill="currentColor" viewBox="0 0 16 16">
+                      <path d="M0 0h1v15h15v1H0V0Zm14.817 3.113a.5.5 0 0 1 .07.704l-4.5 5.5a.5.5 0 0 1-.74.037L7.06 6.767l-3.656 5.027a.5.5 0 0 1-.808-.588l4-5.5a.5.5 0 0 1 .758-.06l2.609 2.61 4.15-5.073a.5.5 0 0 1 .704-.07Z"/>
+                    </svg>
+                  </div>
+                </div>
+              </motion.div>
+            </AnimatedSection>
           </div>
           
           {/* Mobile Optimized Badge */}
