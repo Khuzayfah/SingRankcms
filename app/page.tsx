@@ -250,10 +250,10 @@ export default function Home() {
           <ParticlesContainer />
         </div>
         
-        <div className="relative z-10 container mx-auto px-4 h-screen flex flex-col justify-center">
+        <div className="relative z-10 container mx-auto px-4 h-screen flex flex-col justify-center pt-20 sm:pt-16 md:pt-0">
           <motion.div 
             style={{ opacity, y, scale }}
-            className="flex flex-col items-center text-center max-w-5xl mx-auto"
+            className="flex flex-col items-center text-center max-w-5xl mx-auto mt-12 sm:mt-10 md:mt-0"
           >
             {/* Singapore Flag Colors Animated Highlight */}
             <div className="absolute -top-20 -right-20 w-40 h-40 opacity-20 hidden md:block">
@@ -276,14 +276,14 @@ export default function Home() {
               initial={{ opacity: 0, scale: 0.8 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.8 }}
-              className="mb-6 w-96 h-96 relative"
+              className="mb-6 w-64 h-64 md:w-96 md:h-96 relative"
             >
               <Image
                 src="/icons/logo.png"
                 alt="SingRank Logo"
                 width={384}
                 height={384}
-                className="object-contain"
+                className="object-contain w-full h-full"
                 priority
               />
             </motion.div>
